@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Inclui as configurações padrão do Spring Boot para Logback -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <!-- Define o caminho onde os arquivos de log serão salvos -->
+    <property name="LOG_PATH" value="logs"/>
+
+    <!-- Appender para console - logs aparecem no terminal -->
+    <appender name="CONSOLE_JSON" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <!-- CORRESPONDE AO: "@timestamp" - Primeiro campo do JSON -->
+                <timestamp>
+                    <timeZone>America/Sao_Paulo</timeZone>
+                </timestamp>
+
+                <!-- CORRESPONDE AO: "level" - Nível do log (INFO, WARN, ERROR, etc.) -->
+                <logLevel/>
+
+                <!-- CORRESPONDE AO: "logger_name" - Nome da classe que gerou o log -->
+                <loggerName>
+                    <shortenedLoggerNameLength>35</shortenedLoggerNameLength>
+                </loggerName>
+
+                <!-- CORRESPONDE AO: "message" - Mensagem principal do log -->
+                <message/>
+
+                <!-- CORRESPONDE AO: "stack_trace" - Stack trace de exceções -->
+                <stackTrace>
+                    <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+                        <maxDepthPerThrowable>30</maxDepthPerThrowable>
+                        <rootCauseFirst>true</rootCauseFirst>
+                    </throwableConverter>
+                </stackTrace>
+            </providers>
+        </encoder>
+    </appender>
+
+    <!-- Appender para arquivo - logs são salvos em arquivo com rotação -->
+    <appender name="FILE_JSON" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- Arquivo de log principal -->
+        <file>${LOG_PATH}/application.log.json</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- Padrão para arquivos rotacionados: application.2024-01-01.log.json.gz -->
+            <fileNamePattern>${LOG_PATH}/archived/application.%d{yyyy-MM-dd}.log.json.gz</fileNamePattern>
+            <!-- Mantém logs dos últimos 30 dias -->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <!-- CORRESPONDE AO: "@timestamp" -->
+                <timestamp>
+                    <timeZone>America/Sao_Paulo</timeZone>
+                </timestamp>
+
+                <!-- CORRESPONDE AO: "level" -->
+                <logLevel/>
+
+                <!-- CORRESPONDE AO: "logger_name" -->
+                <loggerName/>
+
+                <!-- CORRESPONDE AO: "message" -->
+                <message/>
+
+                <!-- CORRESPONDE AO: "stack_trace" -->
+                <stackTrace/>
+            </providers>
+        </encoder>
+    </appender>
+
+    <!-- Configuração raiz - aplica a todos os logs da aplicação -->
+    <root level="INFO">
+        <!-- Usa ambos os appenders: console e arquivo -->
+        <appender-ref ref="CONSOLE_JSON"/>
+        <appender-ref ref="FILE_JSON"/>
+    </root>
+
+</configuration>
