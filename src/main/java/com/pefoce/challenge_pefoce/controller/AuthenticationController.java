@@ -84,15 +84,10 @@ public class AuthenticationController {
   public ResponseEntity<LoginResponseDTO> refreshToken(@Parameter(hidden = true) @CookieValue(name = "refreshToken") String refreshToken) {
     String username = tokenService.validateToken(refreshToken);
 
-    // --- CORREÇÃO AQUI ---
-    // 1. Buscamos o usuário no repositório e obtemos um Optional<Users>.
-    // 2. Usamos .orElseThrow() para "abrir a caixa":
-    //    - Se o usuário existir, ele é retornado.
-    //    - Se a caixa estiver vazia (usuário não encontrado), uma exceção é lançada.
+
     Users user = userRepository.findByUsername(username)
       .orElseThrow(() -> new UsernameNotFoundException("Usuário associado ao token de refresh não encontrado"));
 
-    // Agora 'user' é um objeto Users, que pode ser usado para gerar o novo token.
     String newAccessToken = tokenService.generateAccessToken(user);
 
     return ResponseEntity.ok(new LoginResponseDTO(newAccessToken, username));
