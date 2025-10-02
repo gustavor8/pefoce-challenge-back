@@ -29,15 +29,16 @@ public class BlocoBlockchain {
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
+  private Long numeroBloco;
   private String hashAnterior;
   private String hashAtual;
 
   @Column(columnDefinition = "TEXT")
   private String dados;
-
   private LocalDateTime carimboDeTempo;
+  private Integer nonce;
 
-  @PrePersist //executado antes da entidade ser persistida.
+  @PrePersist
   public void onPrePersist() {
     this.carimboDeTempo = LocalDateTime.now();
   }

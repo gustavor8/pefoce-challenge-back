@@ -7,7 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.OffsetDateTime;
 import java.util.HashSet;
-import java.util.Set; // Usamos Set em vez de List para garantir que não haja vestígios duplicados.
+import java.util.Set;
 import java.util.UUID;
 
 @Data
