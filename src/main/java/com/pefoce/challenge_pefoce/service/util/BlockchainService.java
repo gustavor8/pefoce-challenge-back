@@ -4,13 +4,14 @@ import com.pefoce.challenge_pefoce.dto.blockchain.BlockchainValidateDTO;
 import com.pefoce.challenge_pefoce.entity.BlocoBlockchain;
 import com.pefoce.challenge_pefoce.entity.Transferencia;
 import com.pefoce.challenge_pefoce.repository.BlocoBlockchainRepository;
-import com.pefoce.challenge_pefoce.util.HashUtils; // calcular o hash SHA-256.
+import com.pefoce.challenge_pefoce.util.HashUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class BlockchainService {
@@ -24,73 +25,80 @@ public class BlockchainService {
     Optional<BlocoBlockchain> ultimoBloco = blocoBlockchainRepository.findFirstByOrderByNumeroBlocoDesc();
     Long numeroBloco = ultimoBloco.map(b -> b.getNumeroBloco() + 1).orElse(1L);
     String hashAnterior = ultimoBloco.map(BlocoBlockchain::getHashAtual).orElse("0");
+    // O cálculo do hash atual permanece o mesmo
     String hashAtual = calcularHashBloco(numeroBloco, hashAnterior, transacoes);
 
     BlocoBlockchain novoBloco = BlocoBlockchain.builder()
       .numeroBloco(numeroBloco)
       .hashAnterior(hashAnterior)
       .hashAtual(hashAtual)
-      .transacoes(transacoes)
       .carimboDeTempo(LocalDateTime.now())
       .build();
+
+    for (Transferencia t : transacoes) {
+      t.setBlocoBlockchain(novoBloco);
+    }
+    novoBloco.setTransacoes(transacoes);
+
 
     return blocoBlockchainRepository.save(novoBloco);
   }
 
   private String calcularHashBloco(Long numeroBloco, String hashAnterior, Set<Transferencia> transacoes) {
-    String dadosDoBloco = numeroBloco.toString() + hashAnterior + transacoes.stream()
+    String hashesTransacoesConcatenados = transacoes.stream()
       .map(Transferencia::getHashTransacao)
-      .reduce("", String::concat);
+      .sorted() // Ordena os hashes alfabeticamente
+      .collect(Collectors.joining()); // Concatena em uma única String
+
+    String dadosDoBloco = numeroBloco.toString() + hashAnterior + hashesTransacoesConcatenados;
 
     return HashUtils.applySha256(dadosDoBloco);
   }
 
+
   public BlockchainValidateDTO validarBlockchain() {
     List<BlocoBlockchain> blocos = blocoBlockchainRepository.findAllByOrderByNumeroBlocoAsc();
 
-    if (blocos.size() <= 1) {
-      String message = "A cadeia de blocos é válida (contém " + blocos.size() + " bloco(s)).";
-      return new BlockchainValidateDTO(true, message);
+    if (blocos.isEmpty()) {
+      return new BlockchainValidateDTO(true, "A cadeia de blocos é válida (está vazia).");
+    }
+
+    // Validação do primeiro bloco
+    BlocoBlockchain blocoGenesis = blocos.get(0);
+    if (!"0".equals(blocoGenesis.getHashAnterior())) {
+      return new BlockchainValidateDTO(false, "ERRO DE INTEGRIDADE: O hash anterior do Bloco Gênese #1 não é '0'.");
+    }
+    String hashGenesisCalculado = calcularHashBloco(blocoGenesis.getNumeroBloco(), blocoGenesis.getHashAnterior(), blocoGenesis.getTransacoes());
+    if (!hashGenesisCalculado.equals(blocoGenesis.getHashAtual())) {
+      return new BlockchainValidateDTO(false, String.format(
+        "ERRO DE INTEGRIDADE: O hash do Bloco Gênese #1 é inválido. O conteúdo deste bloco foi adulterado. Esperado: %s | Calculado: %s",
+        blocoGenesis.getHashAtual(),
+        hashGenesisCalculado));
     }
 
     for (int i = 1; i < blocos.size(); i++) {
       BlocoBlockchain blocoAtual = blocos.get(i);
       BlocoBlockchain blocoAnterior = blocos.get(i - 1);
 
-      // 1. Recalcula o hash do bloco atual
-      String hashCalculado = calcularHashBloco(
-        blocoAtual.getNumeroBloco(),
-        blocoAtual.getHashAnterior(),
-        blocoAtual.getTransacoes()
-      );
-
-      // VERIFICAÇÃO 1: Integridade do Hash Atual
-      if (!hashCalculado.equals(blocoAtual.getHashAtual())) {
-        String message = String.format(
-          "ERRO DE INTEGRIDADE: O hash do Bloco #%d é inválido. Esperado: %s | Calculado: %s. O conteúdo deste bloco foi adulterado.",
+      if (!blocoAtual.getHashAnterior().equals(blocoAnterior.getHashAtual())) {
+        return new BlockchainValidateDTO(false, String.format(
+          "QUEBRA DE CADEIA: O hash anterior do Bloco #%d está incorreto. A cadeia foi quebrada entre os blocos #%d e #%d.",
           blocoAtual.getNumeroBloco(),
-          blocoAtual.getHashAtual(),
-          hashCalculado
-        );
-        return new BlockchainValidateDTO(false, message);
+          blocoAnterior.getNumeroBloco(),
+          blocoAtual.getNumeroBloco()
+        ));
       }
 
-      // VERIFICAÇÃO 2: Encadeamento do Hash Anterior
-      if (!blocoAtual.getHashAnterior().equals(blocoAnterior.getHashAtual())) {
-        String message = String.format(
-          "QUEBRA DE CADEIA: O Bloco #%d aponta para o hash anterior errado. O Bloco #%d deveria ter o hash %s, mas tem %s. O encadeamento está quebrado.",
-          blocoAtual.getNumeroBloco(),
-          blocoAtual.getNumeroBloco(),
-          blocoAnterior.getHashAtual(),
-          blocoAtual.getHashAnterior()
-        );
-        return new BlockchainValidateDTO(false, message);
+      String hashCalculado = calcularHashBloco(blocoAtual.getNumeroBloco(), blocoAtual.getHashAnterior(), blocoAtual.getTransacoes());
+      if (!hashCalculado.equals(blocoAtual.getHashAtual())) {
+        return new BlockchainValidateDTO(false, String.format(
+          "ERRO DE INTEGRIDADE: O hash do Bloco #%d é inválido. O conteúdo deste bloco foi adulterado.",
+          blocoAtual.getNumeroBloco()
+        ));
       }
     }
 
     String message = String.format("SUCESSO: A cadeia de blocos está íntegra e válida. Total de blocos: %d.", blocos.size());
     return new BlockchainValidateDTO(true, message);
   }
-
-
 }
