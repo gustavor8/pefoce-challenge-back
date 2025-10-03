@@ -22,15 +22,17 @@ public class Transferencia {
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "bloco_blockchain_id")
+  private BlocoBlockchain blocoBlockchain;
+
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
     name = "transferencia_vestigios",
-    // joinColumns: Coluna na tabela de ligação que se refere a transferenica).
     joinColumns = @JoinColumn(name = "transferencia_id"),
-    // inverseJoinColumns: Coluna na tabela de ligação que se refere à vestigio.
     inverseJoinColumns = @JoinColumn(name = "vestigio_id")
   )
-  @Builder.Default // Lombok: Inicializa a coleção para evitar NullPointerException.
+  @Builder.Default
   private Set<Vestigio> vestigios = new HashSet<>();
 
   @Column(columnDefinition = "TEXT")

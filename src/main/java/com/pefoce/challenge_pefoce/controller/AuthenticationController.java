@@ -6,7 +6,7 @@ import com.pefoce.challenge_pefoce.dto.login.LoginResponseDTO;
 import com.pefoce.challenge_pefoce.dto.user.RegisterDTO;
 import com.pefoce.challenge_pefoce.entity.Users;
 import com.pefoce.challenge_pefoce.repository.UserRepository;
-import com.pefoce.challenge_pefoce.service.TokenService;
+import com.pefoce.challenge_pefoce.service.util.TokenService;
 import com.pefoce.challenge_pefoce.service.user.UserRegisterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @Tag(name = "Autenticação", description = "Endpoints para login, registro e renovação de token.")
 public class AuthenticationController {
 
@@ -68,6 +68,7 @@ public class AuthenticationController {
       .body(new LoginResponseDTO(accessToken, userAuthenticated.getUsername()));
   }
 
+  @Operation(summary = "Cadatsrar usuário")
   @PostMapping("/register")
   public ResponseEntity<Void> register(@RequestBody @Valid RegisterDTO registerDTO) {
     userRegisterService.registerUser(registerDTO);

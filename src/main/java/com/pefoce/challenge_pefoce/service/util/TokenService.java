@@ -1,4 +1,4 @@
-package com.pefoce.challenge_pefoce.service;
+package com.pefoce.challenge_pefoce.service.util;
 
 import com.pefoce.challenge_pefoce.entity.Users;
 import io.jsonwebtoken.Jwts;
@@ -15,7 +15,7 @@ import java.util.Date;
 
 @Service
 public class TokenService {
-  
+
   @Value("${api.security.token.secret}")
   private String secret;
 

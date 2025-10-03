@@ -9,31 +9,26 @@ import com.pefoce.challenge_pefoce.entity.vestigio.StatusVestigio;
 import com.pefoce.challenge_pefoce.repository.TransferenciaRepository;
 import com.pefoce.challenge_pefoce.repository.UserRepository;
 import com.pefoce.challenge_pefoce.repository.VestigioRepository;
+import com.pefoce.challenge_pefoce.service.util.BlockchainService;
+import com.pefoce.challenge_pefoce.util.HashUtils; // Import para cálculo do Hash
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 @Service
+@RequiredArgsConstructor // Implementa o construtor com final
 public class TransferenciaCreateService {
 
   private final TransferenciaRepository transferenciaRepository;
   private final UserRepository userRepository;
   private final VestigioRepository vestigioRepository;
   private final TransferenciaMapper transferenciaMapper;
-
-  public TransferenciaCreateService(TransferenciaRepository transferenciaRepository,
-                                    UserRepository userRepository,
-                                    VestigioRepository vestigioRepository,
-                                    TransferenciaMapper transferenciaMapper) {
-    this.transferenciaRepository = transferenciaRepository;
-    this.userRepository = userRepository;
-    this.vestigioRepository = vestigioRepository;
-    this.transferenciaMapper = transferenciaMapper;
-  }
-
+  private final BlockchainService blockchainService;
 
   @Transactional
   public TransferenciaDTO criar(TransferenciaCreateDTO dto, Users responsavelOrigem) {
@@ -58,6 +53,9 @@ public class TransferenciaCreateService {
       .vestigios(vestigios)
       .build();
 
+    String hashCalculado = HashUtils.calculateTransferHash(novaTransferencia);
+    novaTransferencia.setHashTransacao(hashCalculado);
+
     Transferencia transferenciaSalva = transferenciaRepository.save(novaTransferencia);
 
     vestigios.forEach(v -> {
@@ -66,6 +64,7 @@ public class TransferenciaCreateService {
     });
     vestigioRepository.saveAll(vestigios);
 
+    blockchainService.criarNovoBloco(Collections.singleton(transferenciaSalva));
     return transferenciaMapper.toDTO(transferenciaSalva);
   }
 }
