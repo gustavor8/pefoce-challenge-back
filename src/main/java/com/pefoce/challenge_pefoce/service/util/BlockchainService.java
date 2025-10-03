@@ -25,7 +25,7 @@ public class BlockchainService {
     Optional<BlocoBlockchain> ultimoBloco = blocoBlockchainRepository.findFirstByOrderByNumeroBlocoDesc();
     Long numeroBloco = ultimoBloco.map(b -> b.getNumeroBloco() + 1).orElse(1L);
     String hashAnterior = ultimoBloco.map(BlocoBlockchain::getHashAtual).orElse("0");
-    // O cálculo do hash atual permanece o mesmo
+
     String hashAtual = calcularHashBloco(numeroBloco, hashAnterior, transacoes);
 
     BlocoBlockchain novoBloco = BlocoBlockchain.builder()
@@ -39,7 +39,6 @@ public class BlockchainService {
       t.setBlocoBlockchain(novoBloco);
     }
     novoBloco.setTransacoes(transacoes);
-
 
     return blocoBlockchainRepository.save(novoBloco);
   }
@@ -63,7 +62,6 @@ public class BlockchainService {
       return new BlockchainValidateDTO(true, "A cadeia de blocos é válida (está vazia).");
     }
 
-    // Validação do primeiro bloco
     BlocoBlockchain blocoGenesis = blocos.get(0);
     if (!"0".equals(blocoGenesis.getHashAnterior())) {
       return new BlockchainValidateDTO(false, "ERRO DE INTEGRIDADE: O hash anterior do Bloco Gênese #1 não é '0'.");
