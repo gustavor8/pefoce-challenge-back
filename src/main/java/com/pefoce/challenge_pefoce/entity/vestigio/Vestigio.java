@@ -2,7 +2,7 @@ package com.pefoce.challenge_pefoce.entity.vestigio;
 
 import com.pefoce.challenge_pefoce.entity.Transferencia;
 import com.pefoce.challenge_pefoce.entity.Users;
-import com.pefoce.challenge_pefoce.entity.VestigioHistorico;
+
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -61,7 +61,5 @@ public class Vestigio {
   @Builder.Default
   private Set<Transferencia> transferencias = new HashSet<>();
 
-  @OneToMany(mappedBy = "vestigio", cascade = CascadeType.ALL, orphanRemoval = true)
-  @Builder.Default
-  private Set<VestigioHistorico> historico = new HashSet<>();
+
 }
