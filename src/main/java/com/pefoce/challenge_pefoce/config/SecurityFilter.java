@@ -1,7 +1,7 @@
 package com.pefoce.challenge_pefoce.config;
 
 import com.pefoce.challenge_pefoce.repository.UserRepository;
-import com.pefoce.challenge_pefoce.service.TokenService;
+import com.pefoce.challenge_pefoce.service.util.TokenService;
 // Define a cadeia de filtros por onde uma requisição passa.
 import jakarta.servlet.FilterChain;
 // Exceção que pode ocorrer durante o processamento de um filtro.
@@ -42,13 +42,10 @@ public class SecurityFilter extends OncePerRequestFilter {
     if (token!=null) {
       String username = tokenService.validateToken(token);
       var userOptional = userRepository.findByUsername(username);
-      if (userOptional.isPresent()) {
-
-        UserDetails user = userOptional.get();
-
+      userRepository.findByUsername(username).ifPresent(user -> {
         var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
-      }
+      });
     }
     filterChain.doFilter(request, response);
   }

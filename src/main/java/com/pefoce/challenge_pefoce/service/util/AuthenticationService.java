@@ -1,4 +1,4 @@
-package com.pefoce.challenge_pefoce.service;
+package com.pefoce.challenge_pefoce.service.util;
 
 import com.pefoce.challenge_pefoce.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
