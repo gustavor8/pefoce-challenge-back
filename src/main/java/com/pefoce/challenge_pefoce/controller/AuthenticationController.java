@@ -65,7 +65,7 @@ public class AuthenticationController {
 
     return ResponseEntity.ok()
       .header(HttpHeaders.SET_COOKIE, cookie.toString())
-      .body(new LoginResponseDTO(accessToken, userAuthenticated.getUsername()));
+      .body(new LoginResponseDTO(accessToken, userAuthenticated.getNome()));
   }
 
   @Operation(summary = "Cadatsrar usuário")

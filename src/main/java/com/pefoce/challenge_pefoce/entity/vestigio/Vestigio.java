@@ -44,8 +44,6 @@ public class Vestigio {
   @Column(nullable = false)
   private StatusVestigio status;
 
-  @Column(name = "hash_blockchain")
-  private String hashBlockchain;
 
   @CreationTimestamp
   @Column(name = "criado_em", nullable = false, updatable = false)
