@@ -6,7 +6,6 @@ CREATE TABLE vestigios (
     data_coleta TIMESTAMP WITH TIME ZONE NOT NULL,
     status VARCHAR(50) NOT NULL,
     responsavel_atual_id UUID NOT NULL,
-    hash_blockchain VARCHAR(255),
     criado_em TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     atualizado_em TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 

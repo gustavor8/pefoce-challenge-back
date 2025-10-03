@@ -1,4 +1,4 @@
-package com.pefoce.challenge_pefoce;
+package com.pefoce.challenge_pefoce.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

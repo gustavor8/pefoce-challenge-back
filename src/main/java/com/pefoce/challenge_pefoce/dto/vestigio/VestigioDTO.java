@@ -12,7 +12,6 @@ public record VestigioDTO(
   String localColeta,
   OffsetDateTime dataColeta,
   String status,
-  String hashBlockchain,
   OffsetDateTime criadoEm,
   OffsetDateTime atualizadoEm,
   ResponsavelDTO responsavelAtual

@@ -20,7 +20,6 @@ public class VestigioMapper {
       vestigio.getLocalColeta(),
       vestigio.getDataColeta(),
       vestigio.getStatus().name(), // Converte o Enum para seu nome em String.
-      vestigio.getHashBlockchain(),
       vestigio.getCriadoEm(),
       vestigio.getAtualizadoEm(),
       // converte a entidade Users aninhada.
