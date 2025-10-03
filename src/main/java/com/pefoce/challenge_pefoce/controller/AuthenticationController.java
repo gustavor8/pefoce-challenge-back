@@ -3,7 +3,9 @@ package com.pefoce.challenge_pefoce.controller;
 import com.pefoce.challenge_pefoce.dto.shared.ErrorResponseDTO;
 import com.pefoce.challenge_pefoce.dto.login.LoginRequestDTO;
 import com.pefoce.challenge_pefoce.dto.login.LoginResponseDTO;
+import com.pefoce.challenge_pefoce.dto.user.GetUserDTO;
 import com.pefoce.challenge_pefoce.dto.user.RegisterDTO;
+import com.pefoce.challenge_pefoce.dto.user.UserRegisterResponseDTO;
 import com.pefoce.challenge_pefoce.entity.Users;
 import com.pefoce.challenge_pefoce.repository.UserRepository;
 import com.pefoce.challenge_pefoce.service.util.TokenService;
@@ -68,27 +70,30 @@ public class AuthenticationController {
       .body(new LoginResponseDTO(accessToken, userAuthenticated.getNome()));
   }
 
-  @Operation(summary = "Cadatsrar usuário")
+  @Operation(summary = "Cadastrar usuário")
   @PostMapping("/register")
-  public ResponseEntity<Void> register(@RequestBody @Valid RegisterDTO registerDTO) {
-    userRegisterService.registerUser(registerDTO);
-    return ResponseEntity.status(HttpStatus.CREATED).build();
+  public ResponseEntity<UserRegisterResponseDTO> register(@RequestBody @Valid RegisterDTO registerDTO) {
+    GetUserDTO usuarioCriado = userRegisterService.registerUser(registerDTO);
+    String mensagem = "Usuário '" + usuarioCriado.username() + "' foi criado com sucesso!";
+
+    UserRegisterResponseDTO resposta = new UserRegisterResponseDTO(
+      mensagem,
+      usuarioCriado.nome()
+    );
+
+    return ResponseEntity.status(HttpStatus.CREATED).body(resposta);
   }
 
-  @Operation(summary = "Renova o access token usando o refresh token")
+  @Operation(summary = "Renova o access token usando o refresh token - Só funciona com uso prático pois o próprio navegador tem que implementar")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Access token renovado com sucesso", content = @Content(schema = @Schema(implementation = LoginResponseDTO.class))),
     @ApiResponse(responseCode = "403", description = "Refresh token inválido ou expirado", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
   })
-
   @PostMapping("/refresh")
   public ResponseEntity<LoginResponseDTO> refreshToken(@Parameter(hidden = true) @CookieValue(name = "refreshToken") String refreshToken) {
     String username = tokenService.validateToken(refreshToken);
-
-
     Users user = userRepository.findByUsername(username)
       .orElseThrow(() -> new UsernameNotFoundException("Usuário associado ao token de refresh não encontrado"));
-
     String newAccessToken = tokenService.generateAccessToken(user);
 
     return ResponseEntity.ok(new LoginResponseDTO(newAccessToken, username));

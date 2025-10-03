@@ -1,5 +1,6 @@
 package com.pefoce.challenge_pefoce.service.user;
 
+import com.pefoce.challenge_pefoce.dto.user.GetUserDTO;
 import com.pefoce.challenge_pefoce.dto.user.RegisterDTO;
 import com.pefoce.challenge_pefoce.entity.Users;
 import com.pefoce.challenge_pefoce.repository.UserRepository;
@@ -17,15 +18,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserRegisterService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
+  private final UserMapper userMapper;
+
 
   @Autowired
-  public UserRegisterService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+  public UserRegisterService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserMapper userMapper) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
+    this.userMapper = userMapper;
   }
 
   @Transactional
-  public void registerUser(RegisterDTO registerDTO) {
+  public GetUserDTO registerUser(RegisterDTO registerDTO) {
 
     if (userRepository.findByUsername(registerDTO.username()).isPresent()) {
       throw new DataIntegrityViolationException("Nome de usuário já está em uso.");
@@ -37,10 +41,11 @@ public class UserRegisterService {
       .nome(registerDTO.nome())
       .email(registerDTO.email())
       .cargo(registerDTO.cargo())
-      .departamento((registerDTO.departamento()))
+      .departamento(registerDTO.departamento())
       .ativo(true)
       .build();
 
-    userRepository.save(newUser);
+    Users savedUser = userRepository.save(newUser);
+    return userMapper.toDTO(savedUser);
   }
 }
