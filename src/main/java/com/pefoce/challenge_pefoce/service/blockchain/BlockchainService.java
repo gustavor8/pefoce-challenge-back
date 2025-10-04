@@ -1,4 +1,4 @@
-package com.pefoce.challenge_pefoce.service.util;
+package com.pefoce.challenge_pefoce.service.blockchain;
 
 import com.pefoce.challenge_pefoce.dto.blockchain.BlockchainValidateDTO;
 import com.pefoce.challenge_pefoce.entity.BlocoBlockchain;
@@ -43,7 +43,7 @@ public class BlockchainService {
     return blocoBlockchainRepository.save(novoBloco);
   }
 
-  private String calcularHashBloco(Long numeroBloco, String hashAnterior, Set<Transferencia> transacoes) {
+  public String calcularHashBloco(Long numeroBloco, String hashAnterior, Set<Transferencia> transacoes) {
     String hashesTransacoesConcatenados = transacoes.stream()
       .map(Transferencia::getHashTransacao)
       .sorted() // Ordena os hashes alfabeticamente

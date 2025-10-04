@@ -9,7 +9,7 @@ import com.pefoce.challenge_pefoce.entity.vestigio.StatusVestigio;
 import com.pefoce.challenge_pefoce.repository.TransferenciaRepository;
 import com.pefoce.challenge_pefoce.repository.UserRepository;
 import com.pefoce.challenge_pefoce.repository.VestigioRepository;
-import com.pefoce.challenge_pefoce.service.util.BlockchainService;
+import com.pefoce.challenge_pefoce.service.blockchain.BlockchainService;
 import com.pefoce.challenge_pefoce.util.HashUtils; // Import para cálculo do Hash
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
