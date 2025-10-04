@@ -3,7 +3,7 @@ package com.pefoce.challenge_pefoce.controller;
 import com.pefoce.challenge_pefoce.dto.blockchain.BlockchainValidateDTO;
 import com.pefoce.challenge_pefoce.entity.BlocoBlockchain;
 import com.pefoce.challenge_pefoce.repository.BlocoBlockchainRepository;
-import com.pefoce.challenge_pefoce.service.util.BlockchainService;
+import com.pefoce.challenge_pefoce.service.blockchain.BlockchainService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse; // Import para documentar as respostas
 import io.swagger.v3.oas.annotations.responses.ApiResponses; // Import para agrupar as respostas
