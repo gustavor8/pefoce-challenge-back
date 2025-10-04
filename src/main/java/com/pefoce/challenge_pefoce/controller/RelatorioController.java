@@ -27,7 +27,7 @@ public class RelatorioController {
   }
 
   @GetMapping("/cadeia-custodia/{vestigioId}")
-  @Operation(summary = "Gera o relatório da Cadeia de Custódia de um vestígio validando no blockchain")
+  @Operation(summary = "Gera o relatório da Cadeia de Custódia de transferência de um vestígio validando no blockchain")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Relatório gerado com sucesso"),
     @ApiResponse(responseCode = "404", description = "Vestígio não encontrado com o ID fornecido")

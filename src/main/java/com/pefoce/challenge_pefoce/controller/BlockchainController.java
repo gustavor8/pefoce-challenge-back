@@ -37,7 +37,6 @@ public class BlockchainController {
 
   }
 
-
   @GetMapping("/all")
   @Operation(summary = "Lista todos os blocos",
     description = "Retorna todos os blocos de blockchain em ordem cronológica (pelo número do bloco).")
