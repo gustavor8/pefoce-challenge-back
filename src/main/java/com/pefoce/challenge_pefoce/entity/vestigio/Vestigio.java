@@ -61,5 +61,4 @@ public class Vestigio {
   @Builder.Default
   private Set<Transferencia> transferencias = new HashSet<>();
 
-
 }
