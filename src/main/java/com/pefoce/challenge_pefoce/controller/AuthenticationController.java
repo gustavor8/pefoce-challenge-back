@@ -9,7 +9,7 @@ import com.pefoce.challenge_pefoce.dto.usuario.UsuarioRegisterResponseDTO;
 import com.pefoce.challenge_pefoce.entity.Usuario;
 import com.pefoce.challenge_pefoce.repository.UsuarioRepository;
 import com.pefoce.challenge_pefoce.service.util.TokenService;
-import com.pefoce.challenge_pefoce.service.user.UserRegisterService;
+import com.pefoce.challenge_pefoce.service.usuario.UserRegisterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

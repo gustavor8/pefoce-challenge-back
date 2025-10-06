@@ -1,4 +1,4 @@
-package com.pefoce.challenge_pefoce.service.user;
+package com.pefoce.challenge_pefoce.service.usuario;
 
 import com.pefoce.challenge_pefoce.dto.usuario.GetUsuarioDTO;
 import com.pefoce.challenge_pefoce.dto.usuario.UsuarioRegisterDTO;
