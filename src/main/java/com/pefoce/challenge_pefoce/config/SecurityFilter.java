@@ -2,28 +2,22 @@ package com.pefoce.challenge_pefoce.config;
 
 import com.pefoce.challenge_pefoce.repository.UsuarioRepository;
 import com.pefoce.challenge_pefoce.service.util.TokenService;
-// Define a cadeia de filtros por onde uma requisição passa.
 import jakarta.servlet.FilterChain;
-// Exceção que pode ocorrer durante o processamento de um filtro.
 import jakarta.servlet.ServletException;
-// Representa uma requisição HTTP.
 import jakarta.servlet.http.HttpServletRequest;
-// Representa uma resposta HTTP.
 import jakarta.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
-// Objeto que representa o usuário autenticado, suas permissões e credenciais.
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;    // Para definir o Content-Type.
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-// Classe central que armazena os detalhes de segurança da requisição atual.
 import org.springframework.security.core.context.SecurityContextHolder;
-// Interface que define os dados de um usuário.
 // Marca a classe como um componente gerenciado pelo Spring.
 import org.springframework.stereotype.Component;
-// Classe base do Spring para garantir que um filtro seja executado apenas uma vez por requisição.
 import org.springframework.web.filter.OncePerRequestFilter;
 
-// Exceção relacionada a operações de entrada/saída.
 import java.io.IOException;
+import java.io.OutputStream;
+import java.time.Instant;
+import java.util.Optional;
 
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
@@ -46,7 +40,6 @@ public class SecurityFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authentication);
       });
     }
-    filterChain.doFilter(request, response);
   }
 
   private String recoverToken(HttpServletRequest request) {
