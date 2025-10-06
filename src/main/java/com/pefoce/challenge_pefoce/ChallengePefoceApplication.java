@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class ChallengePefoceApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(ChallengePefoceApplication.class, args);
-	}
-
+  public static void main(String[] args) {
+    SpringApplication.run(ChallengePefoceApplication.class, args);
+  }
 }

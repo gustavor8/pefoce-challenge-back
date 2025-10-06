@@ -23,8 +23,8 @@ public class Transferencia {
   private UUID id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "bloco_blockchain_id")
-  private BlocoBlockchain blocoBlockchain;
+  @JoinColumn(name = "blockchain_id")
+  private Blockchain blockchain;
 
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
@@ -50,9 +50,9 @@ public class Transferencia {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "responsavel_origem_id", nullable = false)
-  private Users responsavelOrigem;
+  private Usuario responsavelOrigem;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "responsavel_destino_id", nullable = false)
-  private Users responsavelDestino;
+  private Usuario responsavelDestino;
 }

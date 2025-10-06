@@ -1,7 +1,7 @@
 package com.pefoce.challenge_pefoce.service.blockchain;
 
 import com.pefoce.challenge_pefoce.dto.blockchain.BlockchainValidateDTO;
-import com.pefoce.challenge_pefoce.entity.BlocoBlockchain;
+import com.pefoce.challenge_pefoce.entity.Blockchain;
 import com.pefoce.challenge_pefoce.entity.Transferencia;
 import com.pefoce.challenge_pefoce.util.HashUtils;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ public class BlockchainValidateTransferencia {
         String mensagem = String.format("ERRO DE INTEGRIDADE: Os dados da Transferência ID %s foram adulterados.", t.getId());
         return new BlockchainValidateDTO(false, mensagem);
       }
-      BlocoBlockchain bloco = t.getBlocoBlockchain();
+      Blockchain bloco = t.getBlockchain();
       if (bloco!=null) {
         String hashBlocoCalculado = blockchainService.calcularHashBloco(bloco.getNumeroBloco(), bloco.getHashAnterior(), bloco.getTransacoes());
         if (!hashBlocoCalculado.equals(bloco.getHashAtual())) {

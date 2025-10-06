@@ -1,6 +1,6 @@
 package com.pefoce.challenge_pefoce.service.util;
 
-import com.pefoce.challenge_pefoce.repository.UserRepository;
+import com.pefoce.challenge_pefoce.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 // Interface que define um usuário para o Spring Security.
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,11 +15,11 @@ import org.springframework.stereotype.Service;
 public class AuthenticationService implements UserDetailsService {
 
   @Autowired
-  private UserRepository userRepository;
+  private UsuarioRepository usuarioRepository;
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    return userRepository.findByUsername(username)
+    return usuarioRepository.findByUsername(username)
       .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com o nome: " + username));
   }
 }

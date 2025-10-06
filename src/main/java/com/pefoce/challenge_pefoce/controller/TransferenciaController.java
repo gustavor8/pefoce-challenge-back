@@ -2,7 +2,7 @@ package com.pefoce.challenge_pefoce.controller;
 
 import com.pefoce.challenge_pefoce.dto.transferencia.TransferenciaCreateDTO;
 import com.pefoce.challenge_pefoce.dto.transferencia.TransferenciaDTO;
-import com.pefoce.challenge_pefoce.entity.Users;
+import com.pefoce.challenge_pefoce.entity.Usuario;
 import com.pefoce.challenge_pefoce.service.transferencia.TransferenciaCreateService;
 import com.pefoce.challenge_pefoce.service.transferencia.TransferenciaQueryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -51,7 +51,7 @@ public class TransferenciaController {
   public ResponseEntity<TransferenciaDTO> registrarTransferencia(
     @RequestBody @Valid TransferenciaCreateDTO transferenciaCreateDTO,
     @Parameter(description = "Usuário autenticado que está realizando a transferência", hidden = true)
-    @AuthenticationPrincipal Users responsavelOrigem) {
+    @AuthenticationPrincipal Usuario responsavelOrigem) {
 
     TransferenciaDTO transferenciaSalva = transferenciaServiceCreate.criar(transferenciaCreateDTO, responsavelOrigem);
 

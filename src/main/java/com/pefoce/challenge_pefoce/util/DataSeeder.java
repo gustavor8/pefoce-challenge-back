@@ -2,10 +2,10 @@ package com.pefoce.challenge_pefoce.util;
 
 
 import com.pefoce.challenge_pefoce.dto.transferencia.TransferenciaCreateDTO;
-import com.pefoce.challenge_pefoce.entity.Users;
+import com.pefoce.challenge_pefoce.entity.Usuario;
 import com.pefoce.challenge_pefoce.entity.vestigio.StatusVestigio;
 import com.pefoce.challenge_pefoce.entity.vestigio.Vestigio;
-import com.pefoce.challenge_pefoce.repository.UserRepository;
+import com.pefoce.challenge_pefoce.repository.UsuarioRepository;
 import com.pefoce.challenge_pefoce.repository.VestigioRepository;
 import com.pefoce.challenge_pefoce.service.transferencia.TransferenciaCreateService;
 import org.slf4j.Logger;
@@ -25,16 +25,16 @@ import java.util.Set;
 @Profile("dev")
 public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
 
-  private final UserRepository userRepository;
+  private final UsuarioRepository usuarioRepository;
   private final VestigioRepository vestigioRepository;
   private final PasswordEncoder passwordEncoder;
 
   private final TransferenciaCreateService transferenciaCreateService;
   private static final Logger log = LoggerFactory.getLogger(DataSeeder.class);
 
-  public DataSeeder(UserRepository userRepository, VestigioRepository vestigioRepository,
+  public DataSeeder(UsuarioRepository usuarioRepository, VestigioRepository vestigioRepository,
                     PasswordEncoder passwordEncoder, TransferenciaCreateService transferenciaCreateService) {
-    this.userRepository = userRepository;
+    this.usuarioRepository = usuarioRepository;
     this.vestigioRepository = vestigioRepository;
     this.passwordEncoder = passwordEncoder;
     this.transferenciaCreateService = transferenciaCreateService;
@@ -42,13 +42,13 @@ public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
 
   @Override
   public void onApplicationEvent(ApplicationReadyEvent event) {
-    if (userRepository.findByUsername("enio.perito").isPresent() || userRepository.findByUsername("emanuel.perito").isPresent()) {
+    if (usuarioRepository.findByUsername("enio.perito").isPresent() || usuarioRepository.findByUsername("emanuel.perito").isPresent()) {
       log.info("Usuários de seed já existem no banco. Ignorando a população de dados.");
       return;
     }
     log.info("Populando o banco de dados com dados iniciais...");
 
-    Users userEmanuel = Users.builder()
+    Usuario userEmanuel = Usuario.builder()
       .username("emanuel.perito")
       .password(passwordEncoder.encode("senha123"))
       .nome("Emanuel Félix")
@@ -58,7 +58,7 @@ public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
       .ativo(true)
       .build();
 
-    Users userEnio = Users.builder()
+    Usuario userEnio = Usuario.builder()
       .username("enio.perito")
       .password(passwordEncoder.encode("senha123"))
       .nome("Ênio Viana")
@@ -68,7 +68,7 @@ public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
       .ativo(true)
       .build();
 
-    userRepository.saveAll(List.of(userEmanuel, userEnio));
+    usuarioRepository.saveAll(List.of(userEmanuel, userEnio));
 
     Vestigio celular = Vestigio.builder()
       .tipo("Aparelho Celular")

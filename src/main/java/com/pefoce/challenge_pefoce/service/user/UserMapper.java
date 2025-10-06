@@ -1,7 +1,7 @@
 package com.pefoce.challenge_pefoce.service.user;
 
-import com.pefoce.challenge_pefoce.dto.user.GetUserDTO;
-import com.pefoce.challenge_pefoce.entity.Users;
+import com.pefoce.challenge_pefoce.dto.usuario.GetUsuarioDTO;
+import com.pefoce.challenge_pefoce.entity.Usuario;
 import org.springframework.stereotype.Component;
 
 
@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 public class UserMapper {
 
 
-  public GetUserDTO toDTO(Users user) {
-    return new GetUserDTO(
+  public GetUsuarioDTO toDTO(Usuario user) {
+    return new GetUsuarioDTO(
       user.getId(),
       user.getUsername(),
       user.getNome(),

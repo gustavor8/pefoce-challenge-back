@@ -3,11 +3,11 @@ package com.pefoce.challenge_pefoce.controller;
 import com.pefoce.challenge_pefoce.dto.shared.ErrorResponseDTO;
 import com.pefoce.challenge_pefoce.dto.login.LoginRequestDTO;
 import com.pefoce.challenge_pefoce.dto.login.LoginResponseDTO;
-import com.pefoce.challenge_pefoce.dto.user.GetUserDTO;
-import com.pefoce.challenge_pefoce.dto.user.RegisterDTO;
-import com.pefoce.challenge_pefoce.dto.user.UserRegisterResponseDTO;
-import com.pefoce.challenge_pefoce.entity.Users;
-import com.pefoce.challenge_pefoce.repository.UserRepository;
+import com.pefoce.challenge_pefoce.dto.usuario.GetUsuarioDTO;
+import com.pefoce.challenge_pefoce.dto.usuario.UsuarioRegisterDTO;
+import com.pefoce.challenge_pefoce.dto.usuario.UsuarioRegisterResponseDTO;
+import com.pefoce.challenge_pefoce.entity.Usuario;
+import com.pefoce.challenge_pefoce.repository.UsuarioRepository;
 import com.pefoce.challenge_pefoce.service.util.TokenService;
 import com.pefoce.challenge_pefoce.service.user.UserRegisterService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,7 +42,7 @@ public class AuthenticationController {
   @Autowired
   private UserRegisterService userRegisterService;
   @Autowired
-  private UserRepository userRepository;
+  private UsuarioRepository usuarioRepository;
 
   @Operation(summary = "Realiza o login de um usuário")
   @ApiResponses(value = {
@@ -53,7 +53,7 @@ public class AuthenticationController {
   public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid LoginRequestDTO loginRequest) {
     var usernamePassword = new UsernamePasswordAuthenticationToken(loginRequest.username(), loginRequest.password());
     Authentication auth = this.authenticationManager.authenticate(usernamePassword);
-    Users userAuthenticated = (Users) auth.getPrincipal();
+    Usuario userAuthenticated = (Usuario) auth.getPrincipal();
 
     String accessToken = tokenService.generateAccessToken(userAuthenticated);
     String refreshToken = tokenService.generateRefreshToken(userAuthenticated);
@@ -72,11 +72,11 @@ public class AuthenticationController {
 
   @Operation(summary = "Cadastrar usuário")
   @PostMapping("/register")
-  public ResponseEntity<UserRegisterResponseDTO> register(@RequestBody @Valid RegisterDTO registerDTO) {
-    GetUserDTO usuarioCriado = userRegisterService.registerUser(registerDTO);
+  public ResponseEntity<UsuarioRegisterResponseDTO> register(@RequestBody @Valid UsuarioRegisterDTO usuarioRegisterDTO) {
+    GetUsuarioDTO usuarioCriado = userRegisterService.registerUser(usuarioRegisterDTO);
     String mensagem = "Usuário '" + usuarioCriado.username() + "' foi criado com sucesso!";
 
-    UserRegisterResponseDTO resposta = new UserRegisterResponseDTO(
+    UsuarioRegisterResponseDTO resposta = new UsuarioRegisterResponseDTO(
       mensagem,
       usuarioCriado.nome()
     );
@@ -92,7 +92,7 @@ public class AuthenticationController {
   @PostMapping("/refresh")
   public ResponseEntity<LoginResponseDTO> refreshToken(@Parameter(hidden = true) @CookieValue(name = "refreshToken") String refreshToken) {
     String username = tokenService.validateToken(refreshToken);
-    Users user = userRepository.findByUsername(username)
+    Usuario user = usuarioRepository.findByUsername(username)
       .orElseThrow(() -> new UsernameNotFoundException("Usuário associado ao token de refresh não encontrado"));
     String newAccessToken = tokenService.generateAccessToken(user);
 
