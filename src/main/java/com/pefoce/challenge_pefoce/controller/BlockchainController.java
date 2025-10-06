@@ -1,8 +1,8 @@
 package com.pefoce.challenge_pefoce.controller;
 
 import com.pefoce.challenge_pefoce.dto.blockchain.BlockchainValidateDTO;
-import com.pefoce.challenge_pefoce.entity.BlocoBlockchain;
-import com.pefoce.challenge_pefoce.repository.BlocoBlockchainRepository;
+import com.pefoce.challenge_pefoce.entity.Blockchain;
+import com.pefoce.challenge_pefoce.repository.BlockchainRepository;
 import com.pefoce.challenge_pefoce.service.blockchain.BlockchainService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse; // Import para documentar as respostas
@@ -23,7 +23,7 @@ import java.util.List;
 public class BlockchainController {
 
   private final BlockchainService blockchainService;
-  private final BlocoBlockchainRepository blocoBlockchainRepository;
+  private final BlockchainRepository blockchainRepository;
 
   @GetMapping("/validar")
   @Operation(summary = "Valida a integridade da cadeia de blocos",
@@ -43,9 +43,9 @@ public class BlockchainController {
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Lista de blocos retornada com sucesso.")
   })
-  public ResponseEntity<List<BlocoBlockchain>> listarCadeia() {
+  public ResponseEntity<List<Blockchain>> listarCadeia() {
     // Busca todos os blocos ordenados pelo número, garantindo a visualização sequencial.
-    List<BlocoBlockchain> blocos = blocoBlockchainRepository.findAllByOrderByNumeroBlocoAsc();
+    List<Blockchain> blocos = blockchainRepository.findAllByOrderByNumeroBlocoAsc();
     return ResponseEntity.ok(blocos);
   }
 }

@@ -19,7 +19,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BlocoBlockchain {
+public class Blockchain {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -29,7 +29,7 @@ public class BlocoBlockchain {
   private String hashAnterior;
   private String hashAtual;
 
-  @OneToMany(mappedBy = "blocoBlockchain", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "blockchain", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   @Builder.Default
   private Set<Transferencia> transacoes = new HashSet<>();
 

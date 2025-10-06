@@ -42,7 +42,7 @@ public class VestigioController {
   }
 
 
-  @Operation(summary = "Cria um novo vestígio", description = "Registra um novo vestígio no sistema com um status inicial como coletado - necessário pegar o id do user no bd.")
+  @Operation(summary = "Cria um novo vestígio", description = "Registra um novo vestígio no sistema com um status inicial como coletado - necessário pegar o id do usuario no bd.")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "201", description = "Vestígio criado com sucesso",
       content = @Content(mediaType = "application/json", schema = @Schema(implementation = VestigioDTO.class))),

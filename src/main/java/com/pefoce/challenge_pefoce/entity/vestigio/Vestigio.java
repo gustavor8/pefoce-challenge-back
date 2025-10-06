@@ -1,7 +1,7 @@
 package com.pefoce.challenge_pefoce.entity.vestigio;
 
 import com.pefoce.challenge_pefoce.entity.Transferencia;
-import com.pefoce.challenge_pefoce.entity.Users;
+import com.pefoce.challenge_pefoce.entity.Usuario;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -55,7 +55,7 @@ public class Vestigio {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "responsavel_atual_id", nullable = false)
-  private Users responsavelAtual;
+  private Usuario responsavelAtual;
 
   @ManyToMany(mappedBy = "vestigios")
   @Builder.Default

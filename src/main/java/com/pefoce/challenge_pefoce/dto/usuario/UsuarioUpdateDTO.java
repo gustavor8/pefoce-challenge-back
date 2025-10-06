@@ -1,16 +1,11 @@
-package com.pefoce.challenge_pefoce.dto.user;
+package com.pefoce.challenge_pefoce.dto.usuario;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public record RegisterDTO(
-  @NotBlank(message = "O nome de usuário não pode ser vazio")
-  @Size(max = 100, message = "O nome de usuário não pode exceder 100 caracteres")
-  String username,
-  @NotBlank(message = "A senha não pode ser vazia")
-  @Size(min = 8, message = "A senha deve ter no mínimo 8 caracteres")
-  String password,
+public record UsuarioUpdateDTO(
   @NotBlank(message = "O nome não pode ser vazio")
   @Size(max = 255, message = "O nome não pode exceder 255 caracteres")
   String nome,
@@ -22,6 +17,8 @@ public record RegisterDTO(
   String cargo,
   @Size(max = 100, message = "O departamento não pode exceder 100 caracteres")
   String departamento,
-  String certificadoDigital
+  String certificadoDigital,
+  @NotNull(message = "O status 'ativo' não pode ser nulo")
+  Boolean ativo
 ) {
 }

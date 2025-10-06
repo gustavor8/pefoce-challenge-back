@@ -3,11 +3,11 @@ package com.pefoce.challenge_pefoce.service.transferencia;
 import com.pefoce.challenge_pefoce.dto.transferencia.TransferenciaCreateDTO;
 import com.pefoce.challenge_pefoce.dto.transferencia.TransferenciaDTO;
 import com.pefoce.challenge_pefoce.entity.Transferencia;
-import com.pefoce.challenge_pefoce.entity.Users;
+import com.pefoce.challenge_pefoce.entity.Usuario;
 import com.pefoce.challenge_pefoce.entity.vestigio.Vestigio;
 import com.pefoce.challenge_pefoce.entity.vestigio.StatusVestigio;
 import com.pefoce.challenge_pefoce.repository.TransferenciaRepository;
-import com.pefoce.challenge_pefoce.repository.UserRepository;
+import com.pefoce.challenge_pefoce.repository.UsuarioRepository;
 import com.pefoce.challenge_pefoce.repository.VestigioRepository;
 import com.pefoce.challenge_pefoce.service.blockchain.BlockchainService;
 import com.pefoce.challenge_pefoce.util.HashUtils; // Import para cálculo do Hash
@@ -25,14 +25,14 @@ import java.util.Set;
 public class TransferenciaCreateService {
 
   private final TransferenciaRepository transferenciaRepository;
-  private final UserRepository userRepository;
+  private final UsuarioRepository usuarioRepository;
   private final VestigioRepository vestigioRepository;
   private final TransferenciaMapper transferenciaMapper;
   private final BlockchainService blockchainService;
 
   @Transactional
-  public TransferenciaDTO criar(TransferenciaCreateDTO dto, Users responsavelOrigem) {
-    Users responsavelDestino = userRepository.findById(dto.responsavelDestinoId())
+  public TransferenciaDTO criar(TransferenciaCreateDTO dto, Usuario responsavelOrigem) {
+    Usuario responsavelDestino = usuarioRepository.findById(dto.responsavelDestinoId())
       .orElseThrow(() -> new EntityNotFoundException("Responsável de destino não encontrado."));
 
     Set<Vestigio> vestigios = new HashSet<>(vestigioRepository.findAllById(dto.vestigioIds()));

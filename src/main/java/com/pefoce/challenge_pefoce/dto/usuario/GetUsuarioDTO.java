@@ -1,9 +1,9 @@
-package com.pefoce.challenge_pefoce.dto.user;
+package com.pefoce.challenge_pefoce.dto.usuario;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-public record GetUserDTO(
+public record GetUsuarioDTO(
   UUID id,
   String username,
   String nome,

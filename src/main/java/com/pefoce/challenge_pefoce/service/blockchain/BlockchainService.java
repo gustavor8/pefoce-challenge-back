@@ -1,9 +1,9 @@
 package com.pefoce.challenge_pefoce.service.blockchain;
 
 import com.pefoce.challenge_pefoce.dto.blockchain.BlockchainValidateDTO;
-import com.pefoce.challenge_pefoce.entity.BlocoBlockchain;
+import com.pefoce.challenge_pefoce.entity.Blockchain;
 import com.pefoce.challenge_pefoce.entity.Transferencia;
-import com.pefoce.challenge_pefoce.repository.BlocoBlockchainRepository;
+import com.pefoce.challenge_pefoce.repository.BlockchainRepository;
 import com.pefoce.challenge_pefoce.util.HashUtils;
 import org.springframework.stereotype.Service;
 
@@ -15,20 +15,20 @@ import java.util.stream.Collectors;
 
 @Service
 public class BlockchainService {
-  private final BlocoBlockchainRepository blocoBlockchainRepository;
+  private final BlockchainRepository blockchainRepository;
 
-  public BlockchainService(BlocoBlockchainRepository blocoBlockchainRepository) {
-    this.blocoBlockchainRepository = blocoBlockchainRepository;
+  public BlockchainService(BlockchainRepository blockchainRepository) {
+    this.blockchainRepository = blockchainRepository;
   }
 
-  public BlocoBlockchain criarNovoBloco(Set<Transferencia> transacoes) {
-    Optional<BlocoBlockchain> ultimoBloco = blocoBlockchainRepository.findFirstByOrderByNumeroBlocoDesc();
+  public Blockchain criarNovoBloco(Set<Transferencia> transacoes) {
+    Optional<Blockchain> ultimoBloco = blockchainRepository.findFirstByOrderByNumeroBlocoDesc();
     Long numeroBloco = ultimoBloco.map(b -> b.getNumeroBloco() + 1).orElse(1L);
-    String hashAnterior = ultimoBloco.map(BlocoBlockchain::getHashAtual).orElse("0");
+    String hashAnterior = ultimoBloco.map(Blockchain::getHashAtual).orElse("0");
 
     String hashAtual = calcularHashBloco(numeroBloco, hashAnterior, transacoes);
 
-    BlocoBlockchain novoBloco = BlocoBlockchain.builder()
+    Blockchain novoBloco = Blockchain.builder()
       .numeroBloco(numeroBloco)
       .hashAnterior(hashAnterior)
       .hashAtual(hashAtual)
@@ -36,11 +36,11 @@ public class BlockchainService {
       .build();
 
     for (Transferencia t : transacoes) {
-      t.setBlocoBlockchain(novoBloco);
+      t.setBlockchain(novoBloco);
     }
     novoBloco.setTransacoes(transacoes);
 
-    return blocoBlockchainRepository.save(novoBloco);
+    return blockchainRepository.save(novoBloco);
   }
 
   public String calcularHashBloco(Long numeroBloco, String hashAnterior, Set<Transferencia> transacoes) {
@@ -56,13 +56,13 @@ public class BlockchainService {
 
 
   public BlockchainValidateDTO validarBlockchain() {
-    List<BlocoBlockchain> blocos = blocoBlockchainRepository.findAllByOrderByNumeroBlocoAsc();
+    List<Blockchain> blocos = blockchainRepository.findAllByOrderByNumeroBlocoAsc();
 
     if (blocos.isEmpty()) {
       return new BlockchainValidateDTO(true, "A cadeia de blocos é válida (está vazia).");
     }
 
-    BlocoBlockchain blocoGenesis = blocos.get(0);
+    Blockchain blocoGenesis = blocos.get(0);
     if (!"0".equals(blocoGenesis.getHashAnterior())) {
       return new BlockchainValidateDTO(false, "ERRO DE INTEGRIDADE: O hash anterior do Bloco Gênese #1 não é '0'.");
     }
@@ -75,8 +75,8 @@ public class BlockchainService {
     }
 
     for (int i = 1; i < blocos.size(); i++) {
-      BlocoBlockchain blocoAtual = blocos.get(i);
-      BlocoBlockchain blocoAnterior = blocos.get(i - 1);
+      Blockchain blocoAtual = blocos.get(i);
+      Blockchain blocoAnterior = blocos.get(i - 1);
 
       if (!blocoAtual.getHashAnterior().equals(blocoAnterior.getHashAtual())) {
         return new BlockchainValidateDTO(false, String.format(

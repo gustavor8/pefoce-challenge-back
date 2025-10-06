@@ -2,8 +2,8 @@ package com.pefoce.challenge_pefoce.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper; // Para converter o erro em JSON.
 import com.pefoce.challenge_pefoce.dto.shared.ErrorResponseDTO;
-import com.pefoce.challenge_pefoce.entity.Users;
-import com.pefoce.challenge_pefoce.repository.UserRepository;
+import com.pefoce.challenge_pefoce.entity.Usuario;
+import com.pefoce.challenge_pefoce.repository.UsuarioRepository;
 import com.pefoce.challenge_pefoce.service.util.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -25,11 +25,11 @@ import java.util.Optional;
 public class SecurityFilter extends OncePerRequestFilter {
 
   private final TokenService tokenService;
-  private final UserRepository userRepository;
+  private final UsuarioRepository usuarioRepository;
 
-  public SecurityFilter(TokenService tokenService, UserRepository userRepository) {
+  public SecurityFilter(TokenService tokenService, UsuarioRepository usuarioRepository) {
     this.tokenService = tokenService;
-    this.userRepository = userRepository;
+    this.usuarioRepository = usuarioRepository;
   }
 
   @Override
@@ -41,7 +41,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 
       if (token!=null) {
         var username = tokenService.validateToken(token);
-        Optional<Users> userOptional = userRepository.findByUsername(username);
+        Optional<Usuario> userOptional = usuarioRepository.findByUsername(username);
         userOptional.ifPresent(user -> {
           var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
           SecurityContextHolder.getContext().setAuthentication(authentication);
