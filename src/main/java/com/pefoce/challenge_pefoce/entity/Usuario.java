@@ -52,7 +52,7 @@ public class Usuario implements UserDetails {
   @CreationTimestamp
   @Column(name = "criado_em", nullable = false, updatable = false)
   private OffsetDateTime criadoEm;
-
+  
   @UpdateTimestamp
   @Column(name = "atualizado_em", nullable = false)
   private OffsetDateTime atualizadoEm;

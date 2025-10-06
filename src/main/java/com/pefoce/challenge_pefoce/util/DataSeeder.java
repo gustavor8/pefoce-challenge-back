@@ -132,7 +132,7 @@ public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
     TransferenciaCreateDTO t5_dto = new TransferenciaCreateDTO(Set.of(documento.getId()), userEnio.getId(), "Análise de grafoscopia");
     transferenciaCreateService.criar(t5_dto, userEmanuel);
 
-    log.info("Adicionado os peritos:user: emanuel.perito  password: senha123 user: enio.perito  password: senha123");
+    log.info("Adicionado os peritos:usuario: emanuel.perito  password: senha123 usuario: enio.perito  password: senha123");
     log.info("Banco de dados populado com sucesso.");
   }
 }

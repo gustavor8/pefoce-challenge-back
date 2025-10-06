@@ -23,7 +23,7 @@ import java.util.List;
 public class BlockchainController {
 
   private final BlockchainService blockchainService;
-  private final BlockchainRepository blocoBlockchainRepository;
+  private final BlockchainRepository blockchainRepository;
 
   @GetMapping("/validar")
   @Operation(summary = "Valida a integridade da cadeia de blocos",
@@ -45,7 +45,7 @@ public class BlockchainController {
   })
   public ResponseEntity<List<Blockchain>> listarCadeia() {
     // Busca todos os blocos ordenados pelo número, garantindo a visualização sequencial.
-    List<Blockchain> blocos = blocoBlockchainRepository.findAllByOrderByNumeroBlocoAsc();
+    List<Blockchain> blocos = blockchainRepository.findAllByOrderByNumeroBlocoAsc();
     return ResponseEntity.ok(blocos);
   }
 }

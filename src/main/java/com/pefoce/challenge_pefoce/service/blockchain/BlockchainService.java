@@ -15,14 +15,14 @@ import java.util.stream.Collectors;
 
 @Service
 public class BlockchainService {
-  private final BlockchainRepository blocoBlockchainRepository;
+  private final BlockchainRepository blockchainRepository;
 
-  public BlockchainService(BlockchainRepository blocoBlockchainRepository) {
-    this.blocoBlockchainRepository = blocoBlockchainRepository;
+  public BlockchainService(BlockchainRepository blockchainRepository) {
+    this.blockchainRepository = blockchainRepository;
   }
 
   public Blockchain criarNovoBloco(Set<Transferencia> transacoes) {
-    Optional<Blockchain> ultimoBloco = blocoBlockchainRepository.findFirstByOrderByNumeroBlocoDesc();
+    Optional<Blockchain> ultimoBloco = blockchainRepository.findFirstByOrderByNumeroBlocoDesc();
     Long numeroBloco = ultimoBloco.map(b -> b.getNumeroBloco() + 1).orElse(1L);
     String hashAnterior = ultimoBloco.map(Blockchain::getHashAtual).orElse("0");
 
@@ -40,7 +40,7 @@ public class BlockchainService {
     }
     novoBloco.setTransacoes(transacoes);
 
-    return blocoBlockchainRepository.save(novoBloco);
+    return blockchainRepository.save(novoBloco);
   }
 
   public String calcularHashBloco(Long numeroBloco, String hashAnterior, Set<Transferencia> transacoes) {
@@ -56,7 +56,7 @@ public class BlockchainService {
 
 
   public BlockchainValidateDTO validarBlockchain() {
-    List<Blockchain> blocos = blocoBlockchainRepository.findAllByOrderByNumeroBlocoAsc();
+    List<Blockchain> blocos = blockchainRepository.findAllByOrderByNumeroBlocoAsc();
 
     if (blocos.isEmpty()) {
       return new BlockchainValidateDTO(true, "A cadeia de blocos é válida (está vazia).");
