@@ -1,6 +1,6 @@
 package com.pefoce.challenge_pefoce.config;
 
-import com.pefoce.challenge_pefoce.repository.UserRepository;
+import com.pefoce.challenge_pefoce.repository.UsuarioRepository;
 import com.pefoce.challenge_pefoce.service.util.TokenService;
 // Define a cadeia de filtros por onde uma requisição passa.
 import jakarta.servlet.FilterChain;
@@ -17,7 +17,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 // Classe central que armazena os detalhes de segurança da requisição atual.
 import org.springframework.security.core.context.SecurityContextHolder;
 // Interface que define os dados de um usuário.
-import org.springframework.security.core.userdetails.UserDetails;
 // Marca a classe como um componente gerenciado pelo Spring.
 import org.springframework.stereotype.Component;
 // Classe base do Spring para garantir que um filtro seja executado apenas uma vez por requisição.
@@ -32,7 +31,7 @@ public class SecurityFilter extends OncePerRequestFilter {
   @Autowired
   private TokenService tokenService;
   @Autowired
-  private UserRepository userRepository;
+  private UsuarioRepository usuarioRepository;
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -41,8 +40,8 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     if (token!=null) {
       String username = tokenService.validateToken(token);
-      var userOptional = userRepository.findByUsername(username);
-      userRepository.findByUsername(username).ifPresent(user -> {
+      var userOptional = usuarioRepository.findByUsername(username);
+      usuarioRepository.findByUsername(username).ifPresent(user -> {
         var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
       });

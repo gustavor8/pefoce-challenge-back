@@ -22,27 +22,37 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "users")
-public class Users implements UserDetails {
+@Table(name = "usuarios")
+public class Usuario implements UserDetails {
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
+
   @Column(unique = true, nullable = false)
   private String username;
+
   @Column(nullable = false)
   private String password;
+
   @Column(nullable = false)
   private String nome;
-  @Column(unique = true)
+
+  @Column(unique = true, nullable = false)
   private String email;
+
   private String cargo;
+
   private String departamento;
+
   @Column(name = "certificado_digital", columnDefinition = "TEXT")
   private String certificadoDigital;
+
   private boolean ativo;
+
   @CreationTimestamp
   @Column(name = "criado_em", nullable = false, updatable = false)
   private OffsetDateTime criadoEm;
+
   @UpdateTimestamp
   @Column(name = "atualizado_em", nullable = false)
   private OffsetDateTime atualizadoEm;

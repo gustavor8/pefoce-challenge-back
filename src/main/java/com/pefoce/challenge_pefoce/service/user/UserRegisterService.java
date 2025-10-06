@@ -1,9 +1,9 @@
 package com.pefoce.challenge_pefoce.service.user;
 
-import com.pefoce.challenge_pefoce.dto.user.GetUserDTO;
-import com.pefoce.challenge_pefoce.dto.user.RegisterDTO;
-import com.pefoce.challenge_pefoce.entity.Users;
-import com.pefoce.challenge_pefoce.repository.UserRepository;
+import com.pefoce.challenge_pefoce.dto.usuario.GetUsuarioDTO;
+import com.pefoce.challenge_pefoce.dto.usuario.UsuarioRegisterDTO;
+import com.pefoce.challenge_pefoce.entity.Usuario;
+import com.pefoce.challenge_pefoce.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 // Lançada quando uma regra de integridade do banco de dados é violada.
 import org.springframework.dao.DataIntegrityViolationException;
@@ -16,36 +16,36 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserRegisterService {
-  private final UserRepository userRepository;
+  private final UsuarioRepository usuarioRepository;
   private final PasswordEncoder passwordEncoder;
   private final UserMapper userMapper;
 
 
   @Autowired
-  public UserRegisterService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserMapper userMapper) {
-    this.userRepository = userRepository;
+  public UserRegisterService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder, UserMapper userMapper) {
+    this.usuarioRepository = usuarioRepository;
     this.passwordEncoder = passwordEncoder;
     this.userMapper = userMapper;
   }
 
   @Transactional
-  public GetUserDTO registerUser(RegisterDTO registerDTO) {
+  public GetUsuarioDTO registerUser(UsuarioRegisterDTO usuarioRegisterDTO) {
 
-    if (userRepository.findByUsername(registerDTO.username()).isPresent()) {
+    if (usuarioRepository.findByUsername(usuarioRegisterDTO.username()).isPresent()) {
       throw new DataIntegrityViolationException("Nome de usuário já está em uso.");
     }
-    String hashedPassword = passwordEncoder.encode(registerDTO.password());
-    Users newUser = Users.builder()
-      .username(registerDTO.username())
+    String hashedPassword = passwordEncoder.encode(usuarioRegisterDTO.password());
+    Usuario newUser = Usuario.builder()
+      .username(usuarioRegisterDTO.username())
       .password(hashedPassword)
-      .nome(registerDTO.nome())
-      .email(registerDTO.email())
-      .cargo(registerDTO.cargo())
-      .departamento(registerDTO.departamento())
+      .nome(usuarioRegisterDTO.nome())
+      .email(usuarioRegisterDTO.email())
+      .cargo(usuarioRegisterDTO.cargo())
+      .departamento(usuarioRegisterDTO.departamento())
       .ativo(true)
       .build();
 
-    Users savedUser = userRepository.save(newUser);
+    Usuario savedUser = usuarioRepository.save(newUser);
     return userMapper.toDTO(savedUser);
   }
 }

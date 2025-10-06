@@ -9,5 +9,5 @@ CREATE TABLE vestigios (
     criado_em TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     atualizado_em TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT fk_responsavel_atual FOREIGN KEY (responsavel_atual_id) REFERENCES users(id)
+    CONSTRAINT fk_responsavel_atual FOREIGN KEY (responsavel_atual_id) REFERENCES usuarios(id)
 );

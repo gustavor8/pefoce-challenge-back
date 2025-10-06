@@ -4,7 +4,7 @@ import com.pefoce.challenge_pefoce.dto.shared.ResponsavelDTO;
 import com.pefoce.challenge_pefoce.dto.transferencia.TransferenciaDTO;
 import com.pefoce.challenge_pefoce.dto.vestigio.VestigioTransferDTO;
 import com.pefoce.challenge_pefoce.entity.Transferencia;
-import com.pefoce.challenge_pefoce.entity.Users;
+import com.pefoce.challenge_pefoce.entity.Usuario;
 import com.pefoce.challenge_pefoce.entity.vestigio.Vestigio;
 
 import org.springframework.stereotype.Component;
@@ -31,7 +31,7 @@ public class TransferenciaMapper {
     );
   }
 
-  private ResponsavelDTO toResponsavelDTO(Users user) {
+  private ResponsavelDTO toResponsavelDTO(Usuario user) {
     if (user==null) return null;
     return new ResponsavelDTO(user.getId(), user.getNome());
   }

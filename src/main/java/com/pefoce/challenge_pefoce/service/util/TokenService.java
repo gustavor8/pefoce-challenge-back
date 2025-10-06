@@ -1,6 +1,6 @@
 package com.pefoce.challenge_pefoce.service.util;
 
-import com.pefoce.challenge_pefoce.entity.Users;
+import com.pefoce.challenge_pefoce.entity.Usuario;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
@@ -28,11 +28,11 @@ public class TokenService {
     return Keys.hmacShaKeyFor(secret.getBytes());
   }
 
-  public String generateAccessToken(Users user) {
+  public String generateAccessToken(Usuario user) {
     return generateToken(user.getUsername(), accessTokenExpirationMs);
   }
 
-  public String generateRefreshToken(Users user) {
+  public String generateRefreshToken(Usuario user) {
     return generateToken(user.getUsername(), refreshTokenExpirationMs);
   }
 
