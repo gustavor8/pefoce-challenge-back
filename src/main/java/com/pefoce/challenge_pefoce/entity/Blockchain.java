@@ -25,13 +25,13 @@ public class Blockchain {
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private Long numeroBloco;
 
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true, length = 256)
   private String hashAnterior;
 
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true, length = 256)
   private String hashAtual;
 
   @OneToMany(mappedBy = "blockchain", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
