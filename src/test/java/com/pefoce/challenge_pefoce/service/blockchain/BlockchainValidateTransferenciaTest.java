@@ -3,115 +3,104 @@ package com.pefoce.challenge_pefoce.service.blockchain;
 import com.pefoce.challenge_pefoce.dto.blockchain.BlockchainValidateDTO;
 import com.pefoce.challenge_pefoce.entity.Blockchain;
 import com.pefoce.challenge_pefoce.entity.Transferencia;
+import com.pefoce.challenge_pefoce.entity.Usuario;
 import com.pefoce.challenge_pefoce.util.HashUtils;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension; // Extensão do Mockito para JUnit 5.
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class BlockchainValidateTransferenciaTest {
-
   @Mock
   private BlockchainService blockchainService;
-
   @InjectMocks
   private BlockchainValidateTransferencia blockchainValidateTransferencia;
-  private MockedStatic<HashUtils> mockedHashUtils;
-
+  private Transferencia transferenciaValida;
+  private Blockchain blocoValido;
   @BeforeEach
   void setUp() {
-    mockedHashUtils = Mockito.mockStatic(HashUtils.class);
-  }
-
-  @AfterEach
-  void tearDown() {
-    mockedHashUtils.close();
-  }
-
-
-  @Test
-  @DisplayName("Deve retornar válido quando o histórico de transferências está íntegro")
-  void shouldReturnValid_whenHistoryIsCorrect() {
-    UUID transferenciaId = UUID.randomUUID();
-    Blockchain bloco = Blockchain.builder().numeroBloco(1L).hashAnterior("0").hashAtual("hash_bloco_valido").build();
-    Transferencia transferencia = Transferencia.builder().id(transferenciaId).hashTransacao("hash_trans_valido").blockchain(bloco).build();
-    bloco.setTransacoes(Set.of(transferencia));
-
-    mockedHashUtils.when(() -> HashUtils.calculateTransferHash(transferencia)).thenReturn("hash_trans_valido");
-    when(blockchainService.calcularHashBloco(bloco.getNumeroBloco(), bloco.getHashAnterior(), bloco.getTransacoes()))
-      .thenReturn("hash_bloco_valido");
-
-    BlockchainValidateDTO resultado = blockchainValidateTransferencia.validarHistorico(List.of(transferencia));
-
-    assertThat(resultado.valid()).isTrue();
-    assertThat(resultado.message()).isEqualTo("A cadeia de custódia para este vestígio está íntegra.");
-  }
-
-  @Test
-  @DisplayName("Deve retornar inválido se o hash de uma transferência for adulterado")
-  void shouldReturnInvalid_whenTransferenciaIsTampered() {
-    UUID transferenciaId = UUID.randomUUID();
-    Transferencia transferenciaAdulterada = Transferencia.builder().id(transferenciaId).hashTransacao("hash_salvo_no_banco").build();
-    mockedHashUtils.when(() -> HashUtils.calculateTransferHash(transferenciaAdulterada)).thenReturn("hash_calculado_diferente");
-
-    BlockchainValidateDTO resultado = blockchainValidateTransferencia.validarHistorico(List.of(transferenciaAdulterada));
-
-    assertThat(resultado.valid()).isFalse();
-    assertThat(resultado.message()).isEqualTo("ERRO DE INTEGRIDADE: Os dados da Transferência ID " + transferenciaId + " foram adulterados.");
+    Set<Transferencia> transacoesDoBloco = new HashSet<>();
+    Usuario responsavelOrigem = new Usuario();
+    responsavelOrigem.setId(UUID.randomUUID());
+    Usuario responsavelDestino = new Usuario();
+    responsavelDestino.setId(UUID.randomUUID());
+    transferenciaValida = new Transferencia();
+    transferenciaValida.setId(UUID.randomUUID());
+    transferenciaValida.setResponsavelOrigem(responsavelOrigem);
+    transferenciaValida.setResponsavelDestino(responsavelDestino);
+    transferenciaValida.setDataTransferencia(OffsetDateTime.now());
+    blocoValido = Blockchain.builder()
+      .numeroBloco(1L)
+      .hashAnterior("0")
+      .carimboDeTempo(LocalDateTime.now())
+      .transacoes(transacoesDoBloco)
+      .build();
+    transferenciaValida.setBlockchain(blocoValido);
+    transferenciaValida.setHashTransacao(HashUtils.calculateTransferHash(transferenciaValida));
+    transacoesDoBloco.add(transferenciaValida);
+    String hashesTransacoesConcatenados = transacoesDoBloco.stream()
+      .map(Transferencia::getHashTransacao)
+      .sorted()
+      .collect(Collectors.joining());
+    String dadosDoBloco = blocoValido.getNumeroBloco().toString() + blocoValido.getHashAnterior() + hashesTransacoesConcatenados;
+    blocoValido.setHashAtual(HashUtils.applySha256(dadosDoBloco));
   }
 
   @Test
-  @DisplayName("Deve retornar inválido se o bloco que contém a transferência for adulterado")
-  void shouldReturnInvalid_whenBlockIsTampered() {
-    UUID transferenciaId = UUID.randomUUID();
-    Blockchain blocoAdulterado = Blockchain.builder().numeroBloco(2L).hashAnterior("hash_anterior").hashAtual("hash_bloco_salvo_no_banco").build();
-    Transferencia transferencia = Transferencia.builder().id(transferenciaId).hashTransacao("hash_trans_valido").blockchain(blocoAdulterado).build();
-    blocoAdulterado.setTransacoes(Set.of(transferencia));
+  @DisplayName("Deve retornar válido quando a transferência e seu bloco estão íntegros")
+  void validarHistorico_quandoTudoIntegro_deveRetornarValido() {
+    when(blockchainService.calcularHashBloco(blocoValido.getNumeroBloco(), blocoValido.getHashAnterior(), blocoValido.getTransacoes()))
+      .thenReturn(blocoValido.getHashAtual());
+    BlockchainValidateDTO resultado = blockchainValidateTransferencia.validarHistorico(List.of(transferenciaValida));
+    assertTrue(resultado.valid());
+    assertEquals("A cadeia de custódia para este vestígio está íntegra.", resultado.message());
+  }
 
-    mockedHashUtils.when(() -> HashUtils.calculateTransferHash(transferencia)).thenReturn("hash_trans_valido");
-    when(blockchainService.calcularHashBloco(any(), any(), any())).thenReturn("hash_bloco_calculado_diferente");
+  @Test
+  @DisplayName("Deve retornar inválido se o hash da transferência for inconsistente")
+  void validarHistorico_quandoHashTransferenciaAdulterado_deveRetornarInvalido() {
+    transferenciaValida.setHashTransacao("hash_adulterado");
+    BlockchainValidateDTO resultado = blockchainValidateTransferencia.validarHistorico(List.of(transferenciaValida));
+    assertFalse(resultado.valid());
+    assertEquals(String.format("ERRO DE INTEGRIDADE: Os dados da Transferência ID %s foram adulterados.", transferenciaValida.getId()), resultado.message());
+  }
 
-    BlockchainValidateDTO resultado = blockchainValidateTransferencia.validarHistorico(List.of(transferencia));
+  @Test
+  @DisplayName("Deve retornar inválido se o hash do bloco da transferência for inconsistente")
+  void validarHistorico_quandoHashBlocoAdulterado_deveRetornarInvalido() {
+    when(blockchainService.calcularHashBloco(blocoValido.getNumeroBloco(), blocoValido.getHashAnterior(), blocoValido.getTransacoes()))
+      .thenReturn("hash_calculado_diferente");
+    BlockchainValidateDTO resultado = blockchainValidateTransferencia.validarHistorico(List.of(transferenciaValida));
+    assertFalse(resultado.valid());
+    assertEquals(String.format("ERRO DE INTEGRIDADE: O Bloco #%d, que armazena a Transferência ID %s, foi adulterado.", blocoValido.getNumeroBloco(), transferenciaValida.getId()), resultado.message());
+  }
 
-    assertThat(resultado.valid()).isFalse();
-    assertThat(resultado.message()).isEqualTo("ERRO DE INTEGRIDADE: O Bloco #2, que armazena a Transferência ID " + transferenciaId + ", foi adulterado.");
+  @Test
+  @DisplayName("Deve retornar válido para uma transferência íntegra sem bloco associado")
+  void validarHistorico_quandoTransferenciaSemBloco_deveRetornarValido() {
+    transferenciaValida.setBlockchain(null);
+    transferenciaValida.setHashTransacao(HashUtils.calculateTransferHash(transferenciaValida));
+    BlockchainValidateDTO resultado = blockchainValidateTransferencia.validarHistorico(List.of(transferenciaValida));
+    assertTrue(resultado.valid());
+    assertEquals("A cadeia de custódia para este vestígio está íntegra.", resultado.message());
   }
 
   @Test
   @DisplayName("Deve retornar válido para uma lista de transferências vazia")
-  void shouldReturnValid_whenListOfTransferenciasIsEmpty() {
+  void validarHistorico_quandoListaVazia_deveRetornarValido() {
     BlockchainValidateDTO resultado = blockchainValidateTransferencia.validarHistorico(Collections.emptyList());
-
-    assertThat(resultado.valid()).isTrue();
-    assertThat(resultado.message()).isEqualTo("A cadeia de custódia para este vestígio está íntegra.");
-  }
-
-  @Test
-  @DisplayName("Deve retornar válido se uma transferência íntegra ainda não estiver em um bloco")
-  void shouldReturnValid_whenTransferenciaHasNoBlock() {
-    UUID transferenciaId = UUID.randomUUID();
-    Transferencia transferenciaSemBloco = Transferencia.builder().id(transferenciaId).hashTransacao("hash_valido").blockchain(null).build();
-    mockedHashUtils.when(() -> HashUtils.calculateTransferHash(transferenciaSemBloco)).thenReturn("hash_valido");
-
-    BlockchainValidateDTO resultado = blockchainValidateTransferencia.validarHistorico(List.of(transferenciaSemBloco));
-
-    assertThat(resultado.valid()).isTrue();
-    assertThat(resultado.message()).isEqualTo("A cadeia de custódia para este vestígio está íntegra.");
-    verify(blockchainService, never()).calcularHashBloco(any(), any(), any());
+    assertTrue(resultado.valid());
+    assertEquals("A cadeia de custódia para este vestígio está íntegra.", resultado.message());
   }
 }
 

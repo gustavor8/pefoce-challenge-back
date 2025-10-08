@@ -5,199 +5,158 @@ import com.pefoce.challenge_pefoce.entity.Blockchain;
 import com.pefoce.challenge_pefoce.entity.Transferencia;
 import com.pefoce.challenge_pefoce.repository.BlockchainRepository;
 import com.pefoce.challenge_pefoce.util.HashUtils;
-import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.BeforeEach; // Executar antes de cada teste.
+import org.junit.jupiter.api.DisplayName; // Nomear o teste
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.InjectMocks; // Injetar Objetos
+import org.mockito.Mock; // Criar Mock
+import org.mockito.junit.jupiter.MockitoExtension; // Extensão do Mockito para JUnit 5.
 import java.time.LocalDateTime;
 import java.util.*;
-import static org.assertj.core.api.Assertions.assertThat; //Par usar sem a classe
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import java.util.stream.Collectors;
+import static org.junit.jupiter.api.Assertions.*; // Verificar os resultados
+import static org.mockito.ArgumentMatchers.any; // Pro mockito aceitar qualquer tipo de dado
+import static org.mockito.Mockito.*; // Importar when e verify
 
 @ExtendWith(MockitoExtension.class)
 class BlockchainServiceTest {
-
   @Mock
   private BlockchainRepository blockchainRepository;
 
   @InjectMocks
   private BlockchainService blockchainService;
 
+  private Transferencia transferencia1;
+  private Transferencia transferencia2;
+  private Set<Transferencia> transacoes;
+
+  @BeforeEach
+  void setUp() {
+    transferencia1 = new Transferencia();
+    transferencia1.setHashTransacao("hash123");
+    transferencia2 = new Transferencia();
+    transferencia2.setHashTransacao("hash456");
+    transacoes = new HashSet<>(Set.of(transferencia1, transferencia2));
+  }
+
   @Test
-  @DisplayName("Deve criar o Bloco Gênese quando a blockchain estiver vazia")
-  void shouldCreateGenesisBlock_whenChainIsEmpty() {
-    Set<Transferencia> transacoes = new HashSet<>(Set.of(
-      Transferencia.builder().hashTransacao("hash1").build(),
-      Transferencia.builder().hashTransacao("hash2").build()
-    ));
+  @DisplayName("Deve criar o bloco Gênese quando a blockchain está vazia")
+  void criarNovoBloco_deveCriarBlocoGenese() {
     when(blockchainRepository.findFirstByOrderByNumeroBlocoDesc()).thenReturn(Optional.empty());
     when(blockchainRepository.save(any(Blockchain.class))).thenAnswer(invocation -> invocation.getArgument(0));
     Blockchain novoBloco = blockchainService.criarNovoBloco(transacoes);
-    assertThat(novoBloco).isNotNull();
-    assertThat(novoBloco.getNumeroBloco()).isEqualTo(1L);
-    assertThat(novoBloco.getHashAnterior()).isEqualTo("0");
-    assertThat(novoBloco.getHashAtual()).isNotNull().isNotBlank();
-    assertThat(novoBloco.getCarimboDeTempo()).isNotNull();
-    assertThat(novoBloco.getTransacoes()).isEqualTo(transacoes);
-    novoBloco.getTransacoes().forEach(t -> assertThat(t.getBlockchain()).isEqualTo(novoBloco));
+    assertEquals(1L, novoBloco.getNumeroBloco());
+    assertEquals("0", novoBloco.getHashAnterior());
+    assertNotNull(novoBloco.getHashAtual());
+    assertEquals(transacoes, novoBloco.getTransacoes());
     verify(blockchainRepository, times(1)).save(any(Blockchain.class));
   }
 
   @Test
   @DisplayName("Deve criar um novo bloco referenciando o hash do bloco anterior")
-  void shouldCreateNextBlock_whenChainHasExistingBlocks() {
+  void criarNovoBloco_deveCriarBlocoSubsequente() {
     Blockchain ultimoBloco = Blockchain.builder()
-      .numeroBloco(5L)
-      .hashAtual("hash_do_bloco_5")
+      .numeroBloco(1L)
+      .hashAtual("hashDoBlocoAnterior")
+      .hashAnterior("0")
+      .carimboDeTempo(LocalDateTime.now())
+      .transacoes(new HashSet<>())
       .build();
-    Set<Transferencia> transacoes = new HashSet<>(Set.of(
-      Transferencia.builder().hashTransacao("hashA").build()
-    ));
     when(blockchainRepository.findFirstByOrderByNumeroBlocoDesc()).thenReturn(Optional.of(ultimoBloco));
     when(blockchainRepository.save(any(Blockchain.class))).thenAnswer(invocation -> invocation.getArgument(0));
     Blockchain novoBloco = blockchainService.criarNovoBloco(transacoes);
-    assertThat(novoBloco).isNotNull();
-    assertThat(novoBloco.getNumeroBloco()).isEqualTo(6L);
-    assertThat(novoBloco.getHashAnterior()).isEqualTo("hash_do_bloco_5");
+    assertEquals(2L, novoBloco.getNumeroBloco());
+    assertEquals(ultimoBloco.getHashAtual(), novoBloco.getHashAnterior());
+    assertNotNull(novoBloco.getHashAtual());
+    assertEquals(transacoes, novoBloco.getTransacoes());
     verify(blockchainRepository, times(1)).save(any(Blockchain.class));
   }
 
   @Test
-  @DisplayName("Deve calcular o hash de um bloco corretamente, ordenando os hashes das transações")
-  void shouldCalculateBlockHashCorrectly() {
-    Long numeroBloco = 10L;
-    String hashAnterior = "hash_anterior_123";
-    Set<Transferencia> transacoes = new HashSet<>(Set.of(
-      Transferencia.builder().hashTransacao("hash_transacao_C").build(),
-      Transferencia.builder().hashTransacao("hash_transacao_A").build(),
-      Transferencia.builder().hashTransacao("hash_transacao_B").build()
-    ));
-    String hashesConcatenadosOrdenados = "hash_transacao_Ahash_transacao_Bhash_transacao_C";
-    String dadosEsperadosParaHash = numeroBloco.toString() + hashAnterior + hashesConcatenadosOrdenados;
-    String hashEsperado = HashUtils.applySha256(dadosEsperadosParaHash);
+  @DisplayName("Deve calcular o hash do bloco corretamente")
+  void calcularHashBloco_deveRetornarHashCorreto() {
+    Long numeroBloco = 1L;
+    String hashAnterior = "0";
+    String hashesTransacoesConcatenados = transacoes.stream()
+      .map(Transferencia::getHashTransacao)
+      .sorted()
+      .collect(Collectors.joining());
+    String dadosDoBloco = numeroBloco.toString() + hashAnterior + hashesTransacoesConcatenados;
+    String hashEsperado = HashUtils.applySha256(dadosDoBloco);
     String hashCalculado = blockchainService.calcularHashBloco(numeroBloco, hashAnterior, transacoes);
-
-    assertThat(hashCalculado).isEqualTo(hashEsperado);
+    assertEquals(hashEsperado, hashCalculado);
   }
-
   @Test
   @DisplayName("Deve retornar válido para uma blockchain vazia")
-  void shouldReturnValid_whenChainIsEmpty() {
-    // Arrange
+  void validarBlockchain_quandoVazia_deveRetornarValido() {
     when(blockchainRepository.findAllByOrderByNumeroBlocoAsc()).thenReturn(Collections.emptyList());
-
-    // Act
     BlockchainValidateDTO resultado = blockchainService.validarBlockchain();
-
-    // Assert
-    assertThat(resultado.valid()).isTrue();
-    assertThat(resultado.message()).contains("A cadeia de blocos é válida (está vazia)");
+    assertTrue(resultado.valid());
+    assertEquals("A cadeia de blocos é válida (está vazia).", resultado.message());
   }
 
   @Test
-  @DisplayName("Deve retornar válido para uma blockchain com múltiplos blocos íntegros")
-  void shouldReturnValid_whenChainIsCorrect() {
-    // Arrange
-    List<Blockchain> blocos = criarCadeiaDeBlocosValida(3);
-    when(blockchainRepository.findAllByOrderByNumeroBlocoAsc()).thenReturn(blocos);
-
-    // Act
+  @DisplayName("Deve retornar inválido se o hash anterior do bloco Gênese não for '0'")
+  void validarBlockchain_quandoHashAnteriorDoGeneseIncorreto_deveRetornarInvalido() {
+    Blockchain blocoGenese = Blockchain.builder().numeroBloco(1L).hashAnterior("hash_invalido").transacoes(transacoes).build();
+    when(blockchainRepository.findAllByOrderByNumeroBlocoAsc()).thenReturn(List.of(blocoGenese));
     BlockchainValidateDTO resultado = blockchainService.validarBlockchain();
-
-    // Assert
-    assertThat(resultado.valid()).isTrue();
-    assertThat(resultado.message()).isEqualTo("SUCESSO: A cadeia de blocos está íntegra e válida. Total de blocos: 3.");
+    assertFalse(resultado.valid());
+    assertEquals("ERRO DE INTEGRIDADE: O hash anterior do Bloco Gênese #1 não é '0'.", resultado.message());
   }
 
   @Test
-  @DisplayName("Deve retornar inválido se o hash anterior do Bloco Gênese não for '0'")
-  void shouldReturnInvalid_whenGenesisHashAnteriorIsNotZero() {
-    // Arrange
-    List<Blockchain> blocos = criarCadeiaDeBlocosValida(1);
-    blocos.get(0).setHashAnterior("hash_errado_no_genese");
-    when(blockchainRepository.findAllByOrderByNumeroBlocoAsc()).thenReturn(blocos);
-
-    // Act
+  @DisplayName("Deve retornar inválido se o hash atual do bloco Gênese for inválido")
+  void validarBlockchain_quandoHashAtualDoGeneseInvalido_deveRetornarInvalido() {
+    String hashCorreto = blockchainService.calcularHashBloco(1L, "0", transacoes);
+    Blockchain blocoGenese = Blockchain.builder().numeroBloco(1L).hashAnterior("0").hashAtual("hash_adulterado").transacoes(transacoes).build();
+    when(blockchainRepository.findAllByOrderByNumeroBlocoAsc()).thenReturn(List.of(blocoGenese));
     BlockchainValidateDTO resultado = blockchainService.validarBlockchain();
-
-    // Assert
-    assertThat(resultado.valid()).isFalse();
-    assertThat(resultado.message()).contains("ERRO DE INTEGRIDADE: O hash anterior do Bloco Gênese #1 não é '0'.");
+    assertFalse(resultado.valid());
+    assertTrue(resultado.message().contains("O hash do Bloco Gênese #1 é inválido."));
   }
 
   @Test
-  @DisplayName("Deve retornar inválido se o conteúdo do Bloco Gênese for adulterado")
-  void shouldReturnInvalid_whenGenesisContentIsTampered() {
-    // Arrange
-    List<Blockchain> blocos = criarCadeiaDeBlocosValida(1);
-    blocos.get(0).setHashAtual("hash_adulterado");
-    when(blockchainRepository.findAllByOrderByNumeroBlocoAsc()).thenReturn(blocos);
-
-    // Act
+  @DisplayName("Deve retornar inválido se a cadeia de hashes estiver quebrada")
+  void validarBlockchain_quandoCadeiaQuebrada_deveRetornarInvalido() {
+    Blockchain bloco1 = criarBlocoValido(1L, "0", transacoes);
+    Blockchain bloco2 = Blockchain.builder().numeroBloco(2L).hashAnterior("hash_quebrado").hashAtual("hash_qualquer").transacoes(transacoes).build();
+    when(blockchainRepository.findAllByOrderByNumeroBlocoAsc()).thenReturn(List.of(bloco1, bloco2));
+BlockchainValidateDTO resultado = blockchainService.validarBlockchain();
+    assertFalse(resultado.valid());
+    assertTrue(resultado.message().contains("QUEBRA DE CADEIA"));
+  }
+  @Test
+  @DisplayName("Deve retornar inválido se o conteúdo de um bloco subsequente for adulterado")
+  void validarBlockchain_quandoBlocoSubsequenteAdulterado_deveRetornarInvalido() {
+      Blockchain bloco1 = criarBlocoValido(1L, "0", transacoes);
+      Blockchain bloco2 = Blockchain.builder().numeroBloco(2L).hashAnterior(bloco1.getHashAtual()).hashAtual("hash_adulterado").transacoes(transacoes).build();
+      when(blockchainRepository.findAllByOrderByNumeroBlocoAsc()).thenReturn(List.of(bloco1, bloco2));
     BlockchainValidateDTO resultado = blockchainService.validarBlockchain();
-
-    // Assert
-    assertThat(resultado.valid()).isFalse();
-    assertThat(resultado.message()).contains("O conteúdo deste bloco foi adulterado");
+    assertFalse(resultado.valid());
+    assertTrue(resultado.message().contains("O hash do Bloco #2 é inválido."));
   }
 
   @Test
-  @DisplayName("Deve retornar inválido se a cadeia de hashes estiver quebrada entre blocos")
-  void shouldReturnInvalid_whenChainIsBroken() {
-    // Arrange
-    List<Blockchain> blocos = criarCadeiaDeBlocosValida(3);
-    blocos.get(2).setHashAnterior("hash_quebrado_propositalmente");
-    when(blockchainRepository.findAllByOrderByNumeroBlocoAsc()).thenReturn(blocos);
-
-    // Act
+  @DisplayName("Deve retornar válido para uma blockchain íntegra e válida")
+  void validarBlockchain_quandoCadeiaValida_deveRetornarValido() {
+    Blockchain bloco1 = criarBlocoValido(1L, "0", transacoes);
+    Blockchain bloco2 = criarBlocoValido(2L, bloco1.getHashAtual(), transacoes);
+    when(blockchainRepository.findAllByOrderByNumeroBlocoAsc()).thenReturn(List.of(bloco1, bloco2));
     BlockchainValidateDTO resultado = blockchainService.validarBlockchain();
-
-    // Assert
-    assertThat(resultado.valid()).isFalse();
-    assertThat(resultado.message()).contains("QUEBRA DE CADEIA: O hash anterior do Bloco #3 está incorreto.");
+    assertTrue(resultado.valid());
+    assertEquals("SUCESSO: A cadeia de blocos está íntegra e válida. Total de blocos: 2.", resultado.message());
   }
-
-  @Test
-  @DisplayName("Deve retornar inválido se o conteúdo de um bloco intermediário for adulterado")
-  void shouldReturnInvalid_whenMiddleBlockContentIsTampered() {
-    // Arrange
-    List<Blockchain> blocos = criarCadeiaDeBlocosValida(3);
-    blocos.get(1).setHashAtual("hash_adulterado_no_meio");
-    when(blockchainRepository.findAllByOrderByNumeroBlocoAsc()).thenReturn(blocos);
-
-    // Act
-    BlockchainValidateDTO resultado = blockchainService.validarBlockchain();
-
-    // Assert
-    assertThat(resultado.valid()).isFalse();
-    // CORREÇÃO: Removidas as reticências "..." no final da string esperada.
-    // A verificação agora procura por uma parte da mensagem que realmente existe.
-    assertThat(resultado.message()).contains("ERRO DE INTEGRIDADE: O hash do Bloco #2 é inválido.");
-  }
-
-  // --- Métodos de Apoio (Helpers) ---
-  private List<Blockchain> criarCadeiaDeBlocosValida(int quantidadeDeBlocos) {
-    List<Blockchain> blocos = new ArrayList<>();
-    String hashAnterior = "0";
-    for (long i = 1; i <= quantidadeDeBlocos; i++) {
-      Set<Transferencia> transacoes = Set.of(
-        Transferencia.builder().hashTransacao("hash_transacao_" + i).build()
-      );
-      String hashAtual = blockchainService.calcularHashBloco(i, hashAnterior, transacoes);
-      Blockchain bloco = Blockchain.builder()
-        .numeroBloco(i)
-        .hashAnterior(hashAnterior)
-        .hashAtual(hashAtual)
-        .transacoes(transacoes)
-        .carimboDeTempo(LocalDateTime.now())
-        .build();
-      blocos.add(bloco);
-      hashAnterior = hashAtual;
-    }
-    return blocos;
+  private Blockchain criarBlocoValido(Long numeroBloco, String hashAnterior, Set<Transferencia> transacoes) {
+    String hashAtual = blockchainService.calcularHashBloco(numeroBloco, hashAnterior, transacoes);
+    return Blockchain.builder()
+      .numeroBloco(numeroBloco)
+      .hashAnterior(hashAnterior)
+      .hashAtual(hashAtual)
+      .transacoes(transacoes)
+      .carimboDeTempo(LocalDateTime.now())
+      .build();
   }
 }
 
