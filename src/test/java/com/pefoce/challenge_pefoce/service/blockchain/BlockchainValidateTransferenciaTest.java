@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 class BlockchainValidateTransferenciaTest {
   @Mock
   private BlockchainService blockchainService;
- @InjectMocks
+  @InjectMocks
   private BlockchainValidateTransferencia blockchainValidateTransferencia;
   private Transferencia transferenciaValida;
   private Blockchain blocoValido;
