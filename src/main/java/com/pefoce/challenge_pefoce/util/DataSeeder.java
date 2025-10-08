@@ -22,7 +22,6 @@ import java.util.Set;
 
 
 @Component
-@Profile("dev")
 public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
 
   private final UsuarioRepository usuarioRepository;
