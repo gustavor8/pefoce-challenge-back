@@ -6,9 +6,9 @@ import com.pefoce.challenge_pefoce.dto.vestigio.VestigioTransferDTO;
 import com.pefoce.challenge_pefoce.entity.Transferencia;
 import com.pefoce.challenge_pefoce.entity.Usuario;
 import com.pefoce.challenge_pefoce.entity.vestigio.Vestigio;
-
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
@@ -21,8 +21,8 @@ public class TransferenciaMapper {
       transferencia.getMotivo(),
       transferencia.getDataTransferencia(),
       transferencia.getHashTransacao(),
-      // Mapeia o conjunto de entidades Vestigio para um conjunto de DTOs de vestígio.
       transferencia.getVestigios().stream()
+        .filter(Objects::nonNull) // Remove vestígios nulos da stream.
         .map(this::toVestigioTransferDTO)
         .collect(Collectors.toSet()),
       // Mapeia as entidades de origem e destino para DTOs de responsável.
