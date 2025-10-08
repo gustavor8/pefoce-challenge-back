@@ -1,6 +1,6 @@
 CREATE TABLE transferencias (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    blockchain_id UUID,
+    blockchain_id UUID UNIQUE,
     responsavel_origem_id UUID NOT NULL,
     responsavel_destino_id UUID NOT NULL,
     motivo TEXT,
