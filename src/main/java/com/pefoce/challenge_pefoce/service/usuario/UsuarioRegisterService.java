@@ -15,17 +15,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class UserRegisterService {
+public class UsuarioRegisterService {
   private final UsuarioRepository usuarioRepository;
   private final PasswordEncoder passwordEncoder;
-  private final UserMapper userMapper;
+  private final UsuarioMapper usuarioMapper;
 
 
   @Autowired
-  public UserRegisterService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder, UserMapper userMapper) {
+  public UsuarioRegisterService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder, UsuarioMapper usuarioMapper) {
     this.usuarioRepository = usuarioRepository;
     this.passwordEncoder = passwordEncoder;
-    this.userMapper = userMapper;
+    this.usuarioMapper = usuarioMapper;
   }
 
   @Transactional
@@ -46,6 +46,6 @@ public class UserRegisterService {
       .build();
 
     Usuario savedUser = usuarioRepository.save(newUser);
-    return userMapper.toDTO(savedUser);
+    return usuarioMapper.toDTO(savedUser);
   }
 }

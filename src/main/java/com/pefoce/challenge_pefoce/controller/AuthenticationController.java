@@ -9,7 +9,7 @@ import com.pefoce.challenge_pefoce.dto.usuario.UsuarioRegisterResponseDTO;
 import com.pefoce.challenge_pefoce.entity.Usuario;
 import com.pefoce.challenge_pefoce.repository.UsuarioRepository;
 import com.pefoce.challenge_pefoce.service.util.TokenService;
-import com.pefoce.challenge_pefoce.service.usuario.UserRegisterService;
+import com.pefoce.challenge_pefoce.service.usuario.UsuarioRegisterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -40,7 +40,7 @@ public class AuthenticationController {
   @Autowired
   private TokenService tokenService;
   @Autowired
-  private UserRegisterService userRegisterService;
+  private UsuarioRegisterService usuarioRegisterService;
   @Autowired
   private UsuarioRepository usuarioRepository;
 
@@ -73,7 +73,7 @@ public class AuthenticationController {
   @Operation(summary = "Cadastrar usuário")
   @PostMapping("/register")
   public ResponseEntity<UsuarioRegisterResponseDTO> register(@RequestBody @Valid UsuarioRegisterDTO usuarioRegisterDTO) {
-    GetUsuarioDTO usuarioCriado = userRegisterService.registerUser(usuarioRegisterDTO);
+    GetUsuarioDTO usuarioCriado = usuarioRegisterService.registerUser(usuarioRegisterDTO);
     String mensagem = "Usuário '" + usuarioCriado.username() + "' foi criado com sucesso!";
 
     UsuarioRegisterResponseDTO resposta = new UsuarioRegisterResponseDTO(

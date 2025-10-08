@@ -10,11 +10,11 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class UserMapperTest {
-  private UserMapper userMapper;
+class UsuarioMapperTest {
+  private UsuarioMapper usuarioMapper;
   @BeforeEach
   void setUp() {
-    userMapper = new UserMapper();
+    usuarioMapper = new UsuarioMapper();
   }
 
   @Test
@@ -30,7 +30,7 @@ class UserMapperTest {
     usuarioEntidade.setAtivo(true);
     usuarioEntidade.setCriadoEm(OffsetDateTime.now().minusDays(10));
     usuarioEntidade.setAtualizadoEm(OffsetDateTime.now());
-    GetUsuarioDTO usuarioDTO = userMapper.toDTO(usuarioEntidade);
+    GetUsuarioDTO usuarioDTO = usuarioMapper.toDTO(usuarioEntidade);
     assertNotNull(usuarioDTO, "O DTO resultante não deveria ser nulo.");
     assertEquals(usuarioEntidade.getId(), usuarioDTO.id());
     assertEquals(usuarioEntidade.getUsername(), usuarioDTO.username());
