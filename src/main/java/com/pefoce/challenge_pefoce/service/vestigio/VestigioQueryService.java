@@ -1,6 +1,8 @@
 package com.pefoce.challenge_pefoce.service.vestigio;
 
 import com.pefoce.challenge_pefoce.dto.vestigio.VestigioDTO;
+import com.pefoce.challenge_pefoce.dto.vestigio.VestigioStatusResponseDTO;
+import com.pefoce.challenge_pefoce.entity.vestigio.Vestigio;
 import com.pefoce.challenge_pefoce.repository.VestigioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
@@ -36,5 +38,12 @@ public class VestigioQueryService {
       .map(vestigioMapper::toDTO)
       // 3. Se o Optional estiver vazio, lança uma exceção.
       .orElseThrow(() -> new EntityNotFoundException("Vestígio não encontrado com o ID: " + id));
+  }
+
+  @Transactional(readOnly = true)
+  public VestigioStatusResponseDTO buscarStatusPorId(UUID id) {
+    Vestigio vestigio = vestigioRepository.findById(id)
+      .orElseThrow(() -> new EntityNotFoundException("Vestígio não encontrado com o ID: " + id));
+    return new VestigioStatusResponseDTO(vestigio.getId(), vestigio.getStatus().name());
   }
 }
