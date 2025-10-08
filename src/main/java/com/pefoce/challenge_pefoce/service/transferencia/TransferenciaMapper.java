@@ -1,6 +1,6 @@
 package com.pefoce.challenge_pefoce.service.transferencia;
 
-import com.pefoce.challenge_pefoce.dto.shared.ResponsavelDTO;
+import com.pefoce.challenge_pefoce.dto.usuario.UsuarioResponsavelDTO;
 import com.pefoce.challenge_pefoce.dto.transferencia.TransferenciaDTO;
 import com.pefoce.challenge_pefoce.dto.vestigio.VestigioTransferDTO;
 import com.pefoce.challenge_pefoce.entity.Transferencia;
@@ -31,9 +31,9 @@ public class TransferenciaMapper {
     );
   }
 
-  private ResponsavelDTO toResponsavelDTO(Usuario user) {
+  private UsuarioResponsavelDTO toResponsavelDTO(Usuario user) {
     if (user==null) return null;
-    return new ResponsavelDTO(user.getId(), user.getNome());
+    return new UsuarioResponsavelDTO(user.getId(), user.getNome());
   }
 
 

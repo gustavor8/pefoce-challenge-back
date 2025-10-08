@@ -1,7 +1,7 @@
 package com.pefoce.challenge_pefoce.service.vestigio;
 
 
-import com.pefoce.challenge_pefoce.dto.shared.ResponsavelDTO;
+import com.pefoce.challenge_pefoce.dto.usuario.UsuarioResponsavelDTO;
 import com.pefoce.challenge_pefoce.dto.vestigio.VestigioDTO;
 
 import com.pefoce.challenge_pefoce.entity.Usuario;
@@ -27,9 +27,9 @@ public class VestigioMapper {
     );
   }
 
-  // converte Usuario em ResponsavelDTO
-  private ResponsavelDTO toResponsavelDTO(Usuario user) {
+  // converte Usuario em UsuarioResponsavelDTO
+  private UsuarioResponsavelDTO toResponsavelDTO(Usuario user) {
     if (user==null) return null;
-    return new ResponsavelDTO(user.getId(), user.getNome());
+    return new UsuarioResponsavelDTO(user.getId(), user.getNome());
   }
 }
