@@ -3,10 +3,10 @@ package com.pefoce.challenge_pefoce.util;
 import com.pefoce.challenge_pefoce.entity.Transferencia;
 import com.pefoce.challenge_pefoce.entity.vestigio.Vestigio;
 
-import java.nio.charset.StandardCharsets; // codificação de caracteres em UTF-8.
+import java.nio.charset.StandardCharsets; // Converte  em UTF-8
 import java.security.MessageDigest; // implementar algoritmos de hash.
 import java.security.NoSuchAlgorithmException; // exceção do algoritmo de hash
-import java.util.Comparator; // Para garantir a ordenação dos Vestígios
+import java.util.Comparator; // Para ordenação dos Vestígios
 
 public class HashUtils {
 
@@ -16,8 +16,7 @@ public class HashUtils {
       byte[] hash = digest.digest(input.getBytes(StandardCharsets.UTF_8));
 
       StringBuilder hexString = new StringBuilder();
-
-      // Converte cada byte do hash para o formato hexadecimal.
+      // Converte os bytes em hexadecimal
       for (byte b : hash) {
         String hex = Integer.toHexString(0xff & b);
         if (hex.length()==1) {
@@ -33,10 +32,10 @@ public class HashUtils {
 
   public static String calculateTransferHash(Transferencia transferencia) {
     String vestigioIdsConcatenados = transferencia.getVestigios().stream()
-      // 1. Mapeia para o ID do Vestigio
+      // Mapeia os id do vestigio
       .map(Vestigio::getId)
       .map(Object::toString)
-      // 2. ORDENA: Essencial para estabilidade do hash
+      // Coloca em ordem para não quebrar o hash
       .sorted(Comparator.naturalOrder())
       .reduce("", String::concat);
 
