@@ -23,7 +23,6 @@ public class StartupListener {
     LOGGER.info("------------------------------------------------------------------");
     LOGGER.info("🚀 API iniciada com sucesso!");
     LOGGER.info("   A API está rodando no endereço: http://localhost:{}", port);
-    LOGGER.info("   Documentação através do Swagger UI disponível em: http://localhost:{}/swagger-ui.html", port);
     LOGGER.info("------------------------------------------------------------------");
   }
 }

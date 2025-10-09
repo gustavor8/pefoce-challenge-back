@@ -42,7 +42,7 @@ public class SecurityConfigurations {
       .authorizeHttpRequests(authorize -> authorize
         // Regras para endpoints de autenticação
         .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/register", "/api/auth/refresh").permitAll()
-        .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
+        .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**", "/").permitAll()
         .anyRequest().authenticated()
       ).exceptionHandling(exception -> exception
         .authenticationEntryPoint(customSecurityExceptionHandler) // Para erros 401

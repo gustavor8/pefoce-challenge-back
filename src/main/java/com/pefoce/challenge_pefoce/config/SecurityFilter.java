@@ -11,9 +11,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;    // Para definir o Content-Type.
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-// Marca a classe como um componente gerenciado pelo Spring.
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -34,12 +34,12 @@ public class SecurityFilter extends OncePerRequestFilter {
   }
 
   @Override
-  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+  protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                  @NonNull HttpServletResponse response,
+                                  @NonNull FilterChain filterChain)
     throws ServletException, IOException {
-
     try {
       var token = recoverToken(request);
-
       if (token!=null) {
         var username = tokenService.validateToken(token);
         Optional<Usuario> userOptional = usuarioRepository.findByUsername(username);
@@ -48,11 +48,8 @@ public class SecurityFilter extends OncePerRequestFilter {
           SecurityContextHolder.getContext().setAuthentication(authentication);
         });
       }
-
       filterChain.doFilter(request, response);
-
     } catch (RuntimeException e) {
-
       ErrorResponseDTO errorResponse = new ErrorResponseDTO(
         Instant.now(),
         HttpStatus.FORBIDDEN.value(), // Status 403
