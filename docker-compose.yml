@@ -12,8 +12,50 @@ services:
       - SPRING_DATASOURCE_PASSWORD=Qwe12345
       - SPRING_REDIS_HOST=redis
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      tests:
+        condition: service_completed_successfully
+
+  #Rodar os testes
+  tests:
+    build:
+      context: .
+      #Usa o estágio de build que contém Maven e o código-fonte
+      target: build
+    container_name: pefoce_api_tests
+    # roda os testes e gera o relatório do Jacoco
+    command: mvn verify
+    environment:
+      # Configuração para os testes se conectarem ao banco de dados
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=Qwe12345
+      - SPRING_REDIS_HOST=redis
+    volumes:
+      # Mapeia a pasta do relatório para um volume compartilhado
+      - jacoco-report:/app/target/site/jacoco
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  #Expor o relatório de testes
+  report-server:
+    image: nginx:1.25-alpine
+    container_name: jacoco_report_server
+    ports:
+      - "8082:80"
+    volumes:
+      # Mapeia o volume com o relatório para a pasta que o Nginx serve
+      - jacoco-report:/usr/share/nginx/html:ro # 'ro' = read-only
+    depends_on:
+      tests:
+        condition: service_completed_successfully
 
   # Database
   postgres:
@@ -27,6 +69,11 @@ services:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U root -d postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   # Cache de Sessão e Dados Temporários
   redis:
@@ -34,6 +81,12 @@ services:
     container_name: redis_cache
     ports:
       - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:
+  jacoco-report:
