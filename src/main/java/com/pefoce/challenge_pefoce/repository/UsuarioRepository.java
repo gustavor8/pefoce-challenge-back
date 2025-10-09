@@ -8,6 +8,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, UUID> {
-  // O Spring Data JPA cria o crud
+
   Optional<Usuario> findByUsername(String username);
 }

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper; // Para converter o erro em 
 import com.pefoce.challenge_pefoce.dto.shared.ErrorResponseDTO;
 import com.pefoce.challenge_pefoce.entity.Usuario;
 import com.pefoce.challenge_pefoce.repository.UsuarioRepository;
-import com.pefoce.challenge_pefoce.service.util.TokenService;
+import com.pefoce.challenge_pefoce.service.auth.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

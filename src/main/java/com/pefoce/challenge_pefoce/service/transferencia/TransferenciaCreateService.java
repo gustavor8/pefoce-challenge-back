@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Service
-@RequiredArgsConstructor // Implementa o construtor com final
+@RequiredArgsConstructor
 public class TransferenciaCreateService {
 
   private final TransferenciaRepository transferenciaRepository;

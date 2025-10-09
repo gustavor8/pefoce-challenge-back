@@ -1,6 +1,5 @@
 package com.pefoce.challenge_pefoce.util;
 
-
 import com.pefoce.challenge_pefoce.dto.transferencia.TransferenciaCreateDTO;
 import com.pefoce.challenge_pefoce.entity.Usuario;
 import com.pefoce.challenge_pefoce.entity.vestigio.StatusVestigio;
@@ -12,10 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.annotation.Profile;
+import org.springframework.lang.NonNull;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Set;
@@ -40,8 +38,8 @@ public class DataSeeder implements ApplicationListener<ApplicationReadyEvent> {
   }
 
   @Override
-  public void onApplicationEvent(ApplicationReadyEvent event) {
-    if (usuarioRepository.findByUsername("enio.perito").isPresent() || usuarioRepository.findByUsername("emanuel.perito").isPresent()) {
+  public void onApplicationEvent(@NonNull ApplicationReadyEvent event) {
+    if (usuarioRepository.findByUsername("enio.perito").isPresent() || usuarioRepository.findByUsername("emanuel.perito").isPresent() && usuarioRepository.count() >= 2) {
       log.info("Usuários de seed já existem no banco. Ignorando a população de dados.");
       return;
     }
