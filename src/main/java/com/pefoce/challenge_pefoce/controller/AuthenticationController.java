@@ -8,7 +8,7 @@ import com.pefoce.challenge_pefoce.dto.usuario.UsuarioRegisterDTO;
 import com.pefoce.challenge_pefoce.dto.usuario.UsuarioRegisterResponseDTO;
 import com.pefoce.challenge_pefoce.entity.Usuario;
 import com.pefoce.challenge_pefoce.repository.UsuarioRepository;
-import com.pefoce.challenge_pefoce.service.util.TokenService;
+import com.pefoce.challenge_pefoce.service.auth.TokenService;
 import com.pefoce.challenge_pefoce.service.usuario.UsuarioRegisterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

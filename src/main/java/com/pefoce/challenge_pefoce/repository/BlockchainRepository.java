@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface BlockchainRepository extends JpaRepository<Blockchain, UUID> {
-  // spring implementa o crud
+
   // Busca o ultimo registro, o nome é pra passar os dados pro spring
   Optional<Blockchain> findFirstByOrderByNumeroBlocoDesc();
 

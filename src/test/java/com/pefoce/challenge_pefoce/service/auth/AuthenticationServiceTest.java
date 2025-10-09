@@ -1,4 +1,4 @@
-package com.pefoce.challenge_pefoce.service.util;
+package com.pefoce.challenge_pefoce.service.auth;
 
 import com.pefoce.challenge_pefoce.entity.Usuario;
 import com.pefoce.challenge_pefoce.repository.UsuarioRepository;
