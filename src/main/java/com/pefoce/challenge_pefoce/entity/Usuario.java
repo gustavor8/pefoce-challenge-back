@@ -74,7 +74,6 @@ public class Usuario implements UserDetails {
 
   @Override
   public boolean isAccountNonExpired() {
-    // O Spring Security usa isso para verificar se a conta expirou.
     return true;
   }
 
