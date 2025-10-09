@@ -33,7 +33,7 @@ class BlockchainControllerTest {
   @MockBean
   private TokenService tokenService;
   @MockBean
-  private UsuarioRepository usuarioRepository; // <-- Adicione este mock!
+  private UsuarioRepository usuarioRepository;
   @Autowired
   BlockchainControllerTest(MockMvc mockMvc, ObjectMapper objectMapper) {
     this.mockMvc = mockMvc;
