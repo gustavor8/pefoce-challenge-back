@@ -60,7 +60,7 @@ public class AuthenticationController {
 
     ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
       .httpOnly(true)
-      .secure(true) // Em produção, deve ser true para exigir HTTPS
+      .secure(true) // Pra exigir HTTPS
       .path("/")
       .maxAge(30 * 60) // 30 minutos
       .build();

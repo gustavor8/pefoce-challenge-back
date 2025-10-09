@@ -30,7 +30,7 @@ public class StartupListener {
     LOGGER.info("------------------------------------------------------------------");
     LOGGER.info("🚀 API iniciada com sucesso!");
     LOGGER.info("   Perfil Ativo: {}", profileInfo);
-    LOGGER.info("   URL da API:           http://localhost:{}", port);
+    LOGGER.info("   URL da API: http://localhost:{}", port);
     LOGGER.info("------------------------------------------------------------------");
   }
 }

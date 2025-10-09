@@ -22,7 +22,6 @@ import java.util.List;
 @RequestMapping("/api/transferencias")
 @Tag(name = "Transferências", description = "Endpoints para gestão de transferências de vestígios")
 public class TransferenciaController {
-
   private final TransferenciaCreateService transferenciaServiceCreate;
   private final TransferenciaQueryService transferenciaQueryService;
 
