@@ -1,11 +1,12 @@
 package com.pefoce.challenge_pefoce.util;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
 
 @Component
 public class StartupListener {
@@ -15,14 +16,21 @@ public class StartupListener {
   public StartupListener(Environment environment) {
     this.environment = environment;
   }
-
   @EventListener(ApplicationReadyEvent.class)
   public void onApplicationReady() {
-    String port = environment.getProperty("local.server.port");
+    String port;
+    if (environment.matchesProfiles("docker")) {
+      port = "8081";
+    } else {
+      port = environment.getProperty("local.server.port");
+    }
+    String[] activeProfiles = environment.getActiveProfiles();
+    String profileInfo = (activeProfiles.length > 0) ? Arrays.toString(activeProfiles) : "default";
 
     LOGGER.info("------------------------------------------------------------------");
     LOGGER.info("🚀 API iniciada com sucesso!");
-    LOGGER.info("   A API está rodando no endereço: http://localhost:{}", port);
+    LOGGER.info("   Perfil Ativo: {}", profileInfo);
+    LOGGER.info("   URL da API:           http://localhost:{}", port);
     LOGGER.info("------------------------------------------------------------------");
   }
 }
