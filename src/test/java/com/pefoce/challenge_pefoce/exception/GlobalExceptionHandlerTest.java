@@ -59,7 +59,7 @@ class GlobalExceptionHandlerTest {
   void handleHttpMessageNotReadable() {
     var httpInputMessage = mock(HttpInputMessage.class);
     var ex = new HttpMessageNotReadableException("JSON malformado", httpInputMessage);
-  ResponseEntity<ErrorResponseDTO> response = globalExceptionHandler.handleHttpMessageNotReadable(ex, webRequest);
+    ResponseEntity<ErrorResponseDTO> response = globalExceptionHandler.handleHttpMessageNotReadable(ex, webRequest);
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     assertEquals("O corpo da requisição está malformado ou é inválido.", Objects.requireNonNull(response.getBody()).message());
   }
