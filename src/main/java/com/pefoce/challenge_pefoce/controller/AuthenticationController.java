@@ -84,7 +84,7 @@ public class AuthenticationController {
     return ResponseEntity.status(HttpStatus.CREATED).body(resposta);
   }
 
-  @Operation(summary = "Renova o access token usando o refresh token - Só funciona com uso prático pois o próprio navegador tem que implementar")
+  @Operation(summary = "Renova o access token usando o refresh token")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200", description = "Access token renovado com sucesso", content = @Content(schema = @Schema(implementation = LoginResponseDTO.class))),
     @ApiResponse(responseCode = "403", description = "Refresh token inválido ou expirado", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
