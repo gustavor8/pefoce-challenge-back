@@ -1,6 +1,6 @@
 package com.pefoce.challenge_pefoce.dto.vestigio;
 
-import com.pefoce.challenge_pefoce.dto.shared.ResponsavelDTO;
+import com.pefoce.challenge_pefoce.dto.usuario.UsuarioResponsavelDTO;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -12,9 +12,8 @@ public record VestigioDTO(
   String localColeta,
   OffsetDateTime dataColeta,
   String status,
-  String hashBlockchain,
   OffsetDateTime criadoEm,
   OffsetDateTime atualizadoEm,
-  ResponsavelDTO responsavelAtual
+  UsuarioResponsavelDTO responsavelAtual
 ) {
 }

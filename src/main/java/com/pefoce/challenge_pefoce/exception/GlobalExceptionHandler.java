@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
 
   private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-  // ERRO 400: Bad Request - Validação de DTOs com @Valid
+  // ERRO 400: Bad Request
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ErrorResponseDTO> handleValidationException(MethodArgumentNotValidException ex, WebRequest request) {
     String path = request.getDescription(false).replace("uri=", "");
@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
     return buildErrorResponse(HttpStatus.BAD_REQUEST, message, path);
   }
 
-  // ERRO 400: Bad Request - JSON malformado ou ilegível
+  // ERRO 400: Bad Request
   @ExceptionHandler(HttpMessageNotReadableException.class)
   public ResponseEntity<ErrorResponseDTO> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, WebRequest request) {
     String path = request.getDescription(false).replace("uri=", "");
@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
     return buildErrorResponse(HttpStatus.BAD_REQUEST, message, path);
   }
 
-  // ERRO 403: Forbidden - Falha na autenticação (usuário/senha incorretos)
+  // ERRO 403: Forbidden
   @ExceptionHandler(AuthenticationException.class)
   public ResponseEntity<ErrorResponseDTO> handleAuthenticationException(AuthenticationException ex, WebRequest request) {
     String path = request.getDescription(false).replace("uri=", "");
@@ -55,7 +55,7 @@ public class GlobalExceptionHandler {
     return buildErrorResponse(HttpStatus.FORBIDDEN, message, path);
   }
 
-  // ERRO 404: Not Found - Recurso não encontrado
+  // ERRO 404: Not Found
   @ExceptionHandler(EntityNotFoundException.class)
   public ResponseEntity<ErrorResponseDTO> handleEntityNotFound(EntityNotFoundException ex, WebRequest request) {
     String path = request.getDescription(false).replace("uri=", "");
@@ -64,7 +64,7 @@ public class GlobalExceptionHandler {
     return buildErrorResponse(HttpStatus.NOT_FOUND, message, path);
   }
 
-  // ERRO 405: Method Not Allowed - Método HTTP não suportado
+  // ERRO 405: Method Not Allowed
   @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
   public ResponseEntity<ErrorResponseDTO> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex, WebRequest request) {
     String path = request.getDescription(false).replace("uri=", "");
@@ -74,7 +74,7 @@ public class GlobalExceptionHandler {
     return buildErrorResponse(HttpStatus.METHOD_NOT_ALLOWED, message, path);
   }
 
-  // ERRO 409: Conflict - Violação de regras de negócio ou dados duplicados
+  // ERRO 409: Conflict
   @ExceptionHandler(DataIntegrityViolationException.class)
   public ResponseEntity<ErrorResponseDTO> handleDataIntegrityViolation(DataIntegrityViolationException ex, WebRequest request) {
     String path = request.getDescription(false).replace("uri=", "");
@@ -83,10 +83,7 @@ public class GlobalExceptionHandler {
     return buildErrorResponse(HttpStatus.CONFLICT, message, path);
   }
 
-
-  // --- ERRO DO SERVIDOR (Série 5xx) ---
-
-  // ERRO 500: Internal Server Error - Erro genérico/inesperado
+  // ERRO 500: Internal Server Error
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorResponseDTO> handleGenericException(Exception ex, WebRequest request) {
     String path = request.getDescription(false).replace("uri=", "");

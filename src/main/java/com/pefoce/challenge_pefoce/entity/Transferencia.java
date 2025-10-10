@@ -7,7 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.OffsetDateTime;
 import java.util.HashSet;
-import java.util.Set; // Usamos Set em vez de List para garantir que não haja vestígios duplicados.
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -22,15 +22,17 @@ public class Transferencia {
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "blockchain_id")
+  private Blockchain blockchain;
+
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
     name = "transferencia_vestigios",
-    // joinColumns: Coluna na tabela de ligação que se refere a transferenica).
     joinColumns = @JoinColumn(name = "transferencia_id"),
-    // inverseJoinColumns: Coluna na tabela de ligação que se refere à vestigio.
     inverseJoinColumns = @JoinColumn(name = "vestigio_id")
   )
-  @Builder.Default // Lombok: Inicializa a coleção para evitar NullPointerException.
+  @Builder.Default
   private Set<Vestigio> vestigios = new HashSet<>();
 
   @Column(columnDefinition = "TEXT")
@@ -48,9 +50,9 @@ public class Transferencia {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "responsavel_origem_id", nullable = false)
-  private Users responsavelOrigem;
+  private Usuario responsavelOrigem;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "responsavel_destino_id", nullable = false)
-  private Users responsavelDestino;
+  private Usuario responsavelDestino;
 }

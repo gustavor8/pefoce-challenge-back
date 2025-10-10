@@ -25,13 +25,10 @@ public class VestigioUpdateService {
 
     Vestigio vestigioExistente = vestigioRepository.findById(id)
       .orElseThrow(() -> new EntityNotFoundException("Vestígio não encontrado com o ID: " + id));
-
     vestigioExistente.setTipo(updateDTO.tipo());
     vestigioExistente.setDescricao(updateDTO.descricao());
     vestigioExistente.setLocalColeta(updateDTO.localColeta());
-
     Vestigio vestigioAtualizado = vestigioRepository.save(vestigioExistente);
-
     return vestigioMapper.toDTO(vestigioAtualizado);
   }
 }

@@ -3,7 +3,7 @@ package com.pefoce.challenge_pefoce.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-// Enumeração dos métodos HTTP (GET, POST, etc).
+// Enumeração dos métodos HTTP
 import org.springframework.http.HttpMethod;
 // O gerenciador principal que processa uma requisição de autenticação.
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,13 +22,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 // A cadeia de filtros de segurança que será aplicada às requisições HTTP.
 import org.springframework.security.web.SecurityFilterChain;
-// Filtro padrão do Spring Security para autenticação baseada em formulário (usuário/senha).
+// Filtro padrão do Spring Security para autenticação baseada em formulário.
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import com.pefoce.challenge_pefoce.exception.SecurityExceptionHandler;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfigurations {
-
+  @Autowired
+  private SecurityExceptionHandler customSecurityExceptionHandler;
   @Autowired
   private SecurityFilter securityFilter;
 
@@ -38,10 +40,13 @@ public class SecurityConfigurations {
       .csrf(AbstractHttpConfigurer::disable)
       .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
       .authorizeHttpRequests(authorize -> authorize
-        // Regras para endpoints de autenticação (são POST)
-        .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/register", "/auth/refresh").permitAll()
-        .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
+
+        .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/register").permitAll()
+        .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**", "/").permitAll()
         .anyRequest().authenticated()
+      ).exceptionHandling(exception -> exception
+        .authenticationEntryPoint(customSecurityExceptionHandler) // Para erros 401
+        .accessDeniedHandler(customSecurityExceptionHandler)      // Para erros 403
       )
       .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
       .build();

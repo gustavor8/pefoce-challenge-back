@@ -2,6 +2,7 @@ package com.pefoce.challenge_pefoce.controller;
 
 import com.pefoce.challenge_pefoce.dto.vestigio.VestigioCreateDTO;
 import com.pefoce.challenge_pefoce.dto.vestigio.VestigioDTO;
+import com.pefoce.challenge_pefoce.dto.vestigio.VestigioStatusResponseDTO;
 import com.pefoce.challenge_pefoce.dto.vestigio.VestigioUpdateDTO;
 import com.pefoce.challenge_pefoce.service.vestigio.VestigioCreateService;
 import com.pefoce.challenge_pefoce.service.vestigio.VestigioDeleteService;
@@ -42,7 +43,7 @@ public class VestigioController {
   }
 
 
-  @Operation(summary = "Cria um novo vestígio", description = "Registra um novo vestígio no sistema com um status inicial 'COLETADO'.")
+  @Operation(summary = "Cria um novo vestígio", description = "Registra um novo vestígio no sistema com um status inicial como coletado - necessário pegar o id do usuario no bd.")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "201", description = "Vestígio criado com sucesso",
       content = @Content(mediaType = "application/json", schema = @Schema(implementation = VestigioDTO.class))),
@@ -95,5 +96,17 @@ public class VestigioController {
   public ResponseEntity<Void> deletar(@PathVariable UUID id) {
     deleteService.deletarVestigio(id);
     return ResponseEntity.noContent().build();
+  }
+
+  @Operation(summary = "Busca o status de um vestígio específico", description = "Retorna o ID e o status atual de um vestígio pelo seu UUID.")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Status do vestígio encontrado com sucesso",
+      content = @Content(mediaType = "application/json", schema = @Schema(implementation = VestigioStatusResponseDTO.class))),
+    @ApiResponse(responseCode = "404", description = "Vestígio não encontrado")
+  })
+  @GetMapping("/{id}/status")
+  public ResponseEntity<VestigioStatusResponseDTO> getVestigioStatus(@PathVariable UUID id) {
+    VestigioStatusResponseDTO statusDTO = queryService.buscarStatusPorId(id);
+    return ResponseEntity.ok(statusDTO);
   }
 }

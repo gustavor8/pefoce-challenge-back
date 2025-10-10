@@ -1,8 +1,8 @@
 package com.pefoce.challenge_pefoce.entity.vestigio;
 
 import com.pefoce.challenge_pefoce.entity.Transferencia;
-import com.pefoce.challenge_pefoce.entity.Users;
-import com.pefoce.challenge_pefoce.entity.VestigioHistorico;
+import com.pefoce.challenge_pefoce.entity.Usuario;
+
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -44,8 +44,6 @@ public class Vestigio {
   @Column(nullable = false)
   private StatusVestigio status;
 
-  @Column(name = "hash_blockchain")
-  private String hashBlockchain;
 
   @CreationTimestamp
   @Column(name = "criado_em", nullable = false, updatable = false)
@@ -57,13 +55,10 @@ public class Vestigio {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "responsavel_atual_id", nullable = false)
-  private Users responsavelAtual;
+  private Usuario responsavelAtual;
 
   @ManyToMany(mappedBy = "vestigios")
   @Builder.Default
   private Set<Transferencia> transferencias = new HashSet<>();
 
-  @OneToMany(mappedBy = "vestigio", cascade = CascadeType.ALL, orphanRemoval = true)
-  @Builder.Default
-  private Set<VestigioHistorico> historico = new HashSet<>();
 }
