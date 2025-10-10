@@ -1,0 +1,339 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2025-10-09T21:00:00.000Z",
+  "__export_source": "challenge-submission",
+  "resources": [
+    {
+      "_id": "wrk_1",
+      "parentId": null,
+      "modified": 1728502800000,
+      "created": 1728502800000,
+      "name": "Desafio PEFOCE - Cadeia de Custódia",
+      "description": "",
+      "scope": "collection",
+      "_type": "workspace"
+    },
+    {
+      "_id": "env_1",
+      "parentId": "wrk_1",
+      "modified": 1728502800000,
+      "created": 1728502800000,
+      "name": "Ambiente Local",
+      "data": {
+        "base_url": "http://localhost:8081/api"
+      },
+      "dataPropertyOrder": {
+        "&": [
+          "base_url"
+        ]
+      },
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 1728502800000,
+      "_type": "environment"
+    },
+    {
+      "_id": "fld_auth",
+      "parentId": "wrk_1",
+      "modified": 1728502800000,
+      "created": 1728502800000,
+      "name": "1. Autenticação",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -100,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_login",
+      "parentId": "fld_auth",
+      "modified": 1728502800000,
+      "created": 1728502800000,
+      "url": "{{ _.base_url }}/auth/login",
+      "name": "Login (Ênio)",
+      "description": "Ao executar, o Insomnia salva o refreshToken em um cookie.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"username\": \"enio.perito\",\n\t\"password\": \"senha123\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -100,
+      "_type": "request"
+    },
+    {
+      "_id": "req_register",
+      "parentId": "fld_auth",
+      "modified": 1728502800000,
+      "created": 1728502800000,
+      "url": "{{ _.base_url }}/auth/register",
+      "name": "Registrar Novo Usuário",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"username\": \"novo.perito\",\n\t\"password\": \"senhaNova456\",\n\t\"nome\": \"Fulano de Tal\",\n\t\"email\": \"fulano.perito@email.com\",\n\t\"cargo\": \"Perito Adjunto\",\n\t\"departamento\": \"COTEC\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -90,
+      "_type": "request"
+    },
+    {
+      "_id": "fld_vestigios",
+      "parentId": "wrk_1",
+      "modified": 1728502800000,
+      "created": 1728502800000,
+      "name": "2. Vestígios (CRUD)",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -90,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_create_vestigio",
+      "parentId": "fld_vestigios",
+      "modified": 1728502800000,
+      "created": 1728502800000,
+      "url": "{{ _.base_url }}/vestigios",
+      "name": "Criar Vestígio",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"tipo\": \"HD Externo\",\n\t\"descricao\": \"HD Externo Seagate 1TB, cor preta\",\n\t\"localColeta\": \"Escritório na Av. Bezerra de Menezes, 1000\",\n\t\"dataColeta\": \"2025-10-09T10:00:00Z\",\n\t\"responsavelAtualId\": \"ID_DO_USUARIO_ENIO_AQUI\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {"name": "Content-Type", "value": "application/json"},
+        {"name": "Authorization", "value": "Bearer COLE_SEU_TOKEN_AQUI"}
+      ],
+      "authentication": {},
+      "metaSortKey": -100,
+      "_type": "request"
+    },
+    {
+      "_id": "req_get_all_vestigios",
+      "parentId": "fld_vestigios",
+      "modified": 1728502800000,
+      "created": 1728502800000,
+      "url": "{{ _.base_url }}/vestigios",
+      "name": "Listar Todos os Vestígios",
+      "description": "",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [{"name": "Authorization", "value": "Bearer COLE_SEU_TOKEN_AQUI"}],
+      "authentication": {},
+      "metaSortKey": -90,
+      "_type": "request"
+    },
+    {
+      "_id": "req_get_vestigio_by_id",
+      "parentId": "fld_vestigios",
+      "modified": 1728502800000,
+      "created": 1728502800000,
+      "url": "{{ _.base_url }}/vestigios/ID_DO_VESTIGIO_CELULAR_AQUI",
+      "name": "Buscar Vestígio por ID",
+      "description": "",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [{"name": "Authorization", "value": "Bearer COLE_SEU_TOKEN_AQUI"}],
+      "authentication": {},
+      "metaSortKey": -80,
+      "_type": "request"
+    },
+    {
+      "_id": "req_get_vestigio_status_by_id",
+      "parentId": "fld_vestigios",
+      "modified": 1728502800000,
+      "created": 1728502800000,
+      "url": "{{ _.base_url }}/vestigios/ID_DO_VESTIGIO_CELULAR_AQUI/status",
+      "name": "Buscar Status do Vestígio por ID",
+      "description": "",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [{"name": "Authorization", "value": "Bearer COLE_SEU_TOKEN_AQUI"}],
+      "authentication": {},
+      "metaSortKey": -70,
+      "_type": "request"
+    },
+    {
+      "_id": "req_update_vestigio",
+      "parentId": "fld_vestigios",
+      "modified": 1728502800000,
+      "created": 1728502800000,
+      "url": "{{ _.base_url }}/vestigios/ID_DO_VESTIGIO_CELULAR_AQUI",
+      "name": "Atualizar Vestígio",
+      "description": "",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"tipo\": \"Aparelho Celular\",\n\t\"descricao\": \"Smartphone Samsung A51, tela trincada e carcaça arranhada\",\n\t\"localColeta\": \"Rua das Flores, 123, Bairro Aldeota\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {"name": "Content-Type", "value": "application/json"},
+        {"name": "Authorization", "value": "Bearer COLE_SEU_TOKEN_AQUI"}
+      ],
+      "authentication": {},
+      "metaSortKey": -60,
+      "_type": "request"
+    },
+    {
+      "_id": "fld_transferencias",
+      "parentId": "wrk_1",
+      "modified": 1728502800000,
+      "created": 1728502800000,
+      "name": "3. Transferências",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -80,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_create_transferencia",
+      "parentId": "fld_transferencias",
+      "modified": 1728502800000,
+      "created": 1728502800000,
+      "url": "{{ _.base_url }}/transferencias",
+      "name": "Registrar Transferência",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"vestigioIds\": [\n\t\t\"ID_DO_VESTIGIO_ARMA_AQUI\"\n\t],\n\t\"responsavelDestinoId\": \"ID_DO_USUARIO_EMANUEL_AQUI\",\n\t\"motivo\": \"Encaminhado para análise balística.\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {"name": "Content-Type", "value": "application/json"},
+        {"name": "Authorization", "value": "Bearer COLE_SEU_TOKEN_AQUI"}
+      ],
+      "authentication": {},
+      "metaSortKey": -100,
+      "_type": "request"
+    },
+    {
+      "_id": "req_get_all_transferencias",
+      "parentId": "fld_transferencias",
+      "modified": 1728502800000,
+      "created": 1728502800000,
+      "url": "{{ _.base_url }}/transferencias",
+      "name": "Listar Todas as Transferências",
+      "description": "",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [{"name": "Authorization", "value": "Bearer COLE_SEU_TOKEN_AQUI"}],
+      "authentication": {},
+      "metaSortKey": -90,
+      "_type": "request"
+    },
+    {
+      "_id": "fld_relatorios",
+      "parentId": "wrk_1",
+      "modified": 1728502800000,
+      "created": 1728502800000,
+      "name": "4. Relatórios e Auditoria",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -70,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_get_relatorio_json",
+      "parentId": "fld_relatorios",
+      "modified": 1728502800000,
+      "created": 1728502800000,
+      "url": "{{ _.base_url }}/relatorios/cadeia-custodia/ID_DO_VESTIGIO_CELULAR_AQUI",
+      "name": "Gerar Relatório (JSON)",
+      "description": "",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [{"name": "Authorization", "value": "Bearer COLE_SEU_TOKEN_AQUI"}],
+      "authentication": {},
+      "metaSortKey": -100,
+      "_type": "request"
+    },
+    {
+      "_id": "req_get_relatorio_pdf",
+      "parentId": "fld_relatorios",
+      "modified": 1728502800000,
+      "created": 1728502800000,
+      "url": "{{ _.base_url }}/relatorios/cadeia-custodia/ID_DO_VESTIGIO_CELULAR_AQUI/pdf",
+      "name": "Exportar Relatório (PDF)",
+      "description": "",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [{"name": "Authorization", "value": "Bearer COLE_SEU_TOKEN_AQUI"}],
+      "authentication": {},
+      "metaSortKey": -90,
+      "_type": "request"
+    },
+    {
+      "_id": "fld_blockchain",
+      "parentId": "wrk_1",
+      "modified": 1728502800000,
+      "created": 1728502800000,
+      "name": "5. Blockchain",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -60,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_validate_blockchain",
+      "parentId": "fld_blockchain",
+      "modified": 1728502800000,
+      "created": 1728502800000,
+      "url": "{{ _.base_url }}/blockchain/validar",
+      "name": "Validar Integridade da Cadeia",
+      "description": "",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [{"name": "Authorization", "value": "Bearer COLE_SEU_TOKEN_AQUI"}],
+      "authentication": {},
+      "metaSortKey": -100,
+      "_type": "request"
+    },
+    {
+      "_id": "req_get_all_blocks",
+      "parentId": "fld_blockchain",
+      "modified": 1728502800000,
+      "created": 1728502800000,
+      "url": "{{ _.base_url }}/blockchain/all",
+      "name": "Listar Todos os Blocos",
+      "description": "",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [{"name": "Authorization", "value": "Bearer COLE_SEU_TOKEN_AQUI"}],
+      "authentication": {},
+      "metaSortKey": -90,
+      "_type": "request"
+    }
+  ]
+}
