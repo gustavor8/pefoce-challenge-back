@@ -5,6 +5,8 @@ import com.pefoce.challenge_pefoce.dto.vestigio.VestigioUpdateDTO;
 import com.pefoce.challenge_pefoce.entity.vestigio.Vestigio;
 import com.pefoce.challenge_pefoce.repository.VestigioRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +21,10 @@ public class VestigioUpdateService {
     this.vestigioRepository = vestigioRepository;
     this.vestigioMapper = vestigioMapper;
   }
-
+  @Caching(evict = {
+    @CacheEvict(value = "vestigios", key = "#id"),
+    @CacheEvict(value = "relatorios", key = "#id")
+  })
   @Transactional
   public VestigioDTO atualizarVestigio(UUID id, VestigioUpdateDTO updateDTO) {
 

@@ -5,12 +5,12 @@ import com.pefoce.challenge_pefoce.dto.vestigio.VestigioStatusResponseDTO;
 import com.pefoce.challenge_pefoce.entity.vestigio.Vestigio;
 import com.pefoce.challenge_pefoce.repository.VestigioRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors; // Classe do Java com métodos para coletar elementos de uma Stream.
+import java.util.stream.Collectors;
 
 @Service
 public class VestigioQueryService {
@@ -31,12 +31,11 @@ public class VestigioQueryService {
       .collect(Collectors.toList());
   }
 
+  @Cacheable(value = "vestigios", key = "#id")
   @Transactional(readOnly = true)
   public VestigioDTO buscarPorId(UUID id) {
     return vestigioRepository.findById(id)
-      // 2. Se o Optional contiver um vestígio converte para DTO
       .map(vestigioMapper::toDTO)
-      // 3. Se o Optional estiver vazio, lança uma exceção.
       .orElseThrow(() -> new EntityNotFoundException("Vestígio não encontrado com o ID: " + id));
   }
 

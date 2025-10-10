@@ -62,7 +62,7 @@ public class BlockchainService {
       return new BlockchainValidateDTO(true, "A cadeia de blocos é válida (está vazia).");
     }
 
-    Blockchain blocoGenesis = blocos.get(0);
+    Blockchain blocoGenesis = blocos.getFirst();
     if (!"0".equals(blocoGenesis.getHashAnterior())) {
       return new BlockchainValidateDTO(false, "ERRO DE INTEGRIDADE: O hash anterior do Bloco Gênese #1 não é '0'.");
     }

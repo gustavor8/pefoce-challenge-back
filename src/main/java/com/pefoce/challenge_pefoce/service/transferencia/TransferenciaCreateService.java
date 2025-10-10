@@ -13,6 +13,8 @@ import com.pefoce.challenge_pefoce.service.blockchain.BlockchainService;
 import com.pefoce.challenge_pefoce.util.HashUtils; // Import para cálculo do Hash
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +32,10 @@ public class TransferenciaCreateService {
   private final TransferenciaMapper transferenciaMapper;
   private final BlockchainService blockchainService;
 
+  @Caching(evict = {
+    @CacheEvict(value = "vestigios", allEntries = true),
+    @CacheEvict(value = "relatorios", allEntries = true)
+  })
   @Transactional
   public TransferenciaDTO criar(TransferenciaCreateDTO dto, Usuario responsavelOrigem) {
     Usuario responsavelDestino = usuarioRepository.findById(dto.responsavelDestinoId())

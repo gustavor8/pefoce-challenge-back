@@ -9,6 +9,7 @@ import com.pefoce.challenge_pefoce.repository.TransferenciaRepository;
 import com.pefoce.challenge_pefoce.service.blockchain.BlockchainValidateTransferencia;
 import com.pefoce.challenge_pefoce.service.transferencia.TransferenciaMapper;
 import com.pefoce.challenge_pefoce.service.vestigio.VestigioQueryService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +36,7 @@ public class RelatorioTransferenciaVestigioService {
     this.validateTransferenciaService = validateTransferenciaService;
   }
 
+  @Cacheable(value = "relatorios", key = "#vestigioId")
   @Transactional(readOnly = true)
   public CadeiaCustodiaTransferenciaDTO gerarCadeiaDeCustodia(UUID vestigioId) {
     VestigioDTO vestigioDTO = vestigioQueryService.buscarPorId(vestigioId);
