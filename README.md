@@ -132,9 +132,9 @@ Para clonar e executar o projeto, siga os passos abaixo:
     ```
 
 3.  **Execute o Docker Compose:**
-    O comando a seguir irá orquestrar um pipeline completo e automatizado, executando os contêineres em segundo plano (`-d`):
+    O comando a seguir irá orquestrar um pipeline completo e automatizado, executando os contêineres:
     ```bash
-    docker-compose up -d --build
+    docker-compose up --build
     ```
 
 Este comando irá:
